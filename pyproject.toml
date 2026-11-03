@@ -1,0 +1,19 @@
+[project]
+name = "wifcam-helper"
+version = "0.1.0"
+description = "PegineLab local-first test bench for the T23N camera"
+requires-python = ">=3.12"
+dependencies = []
+
+[project.scripts]
+wifcam-helper = "wifcam_helper.bench:main"
+
+[build-system]
+requires = ["setuptools>=68"]
+build-backend = "setuptools.build_meta"
+
+[tool.setuptools]
+packages = ["wifcam_helper"]
+
+[tool.setuptools.package-data]
+wifcam_helper = ["ui.html"]
