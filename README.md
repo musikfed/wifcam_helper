@@ -24,6 +24,25 @@ uv run --no-project python3 -m wifcam_helper web
 - `profiles/t23n_lean.json`: **allowlisted, conservative build profile**, staged for YadroKreator (does not modify the kernel).
 - `tests/`: hardware-free CI exercises for security, UTF-8 locale completeness and recommendation schema.
 
+## Comparison, real latency and optional AI
+```sh
+# Compare up to two existing RTSP streams across TCP and UDP:
+python3 -m wifcam_helper compare --rtsp-url rtsp://CAMERA_IP:554/ch0 --alt-rtsp-url rtsp://CAMERA_IP:554/ch1
+# Only after physically measuring day/night/motion scenes and filling the CSV:
+python3 -m wifcam_helper quality-evaluate --csv /private/measurements.csv
+# Optional LOCAL object classifier, on CORE (not on the camera):
+python3 -m wifcam_helper classification --rtsp-url rtsp://CAMERA_IP:554/ch0 --model /trusted/models/yolo11n.pt --device cpu --vision-consent
+```
+
+- **Decode throughput is not glass-to-glass latency.** Use a separate high-speed phone recording both a direct LED/clock and the delayed Hombo3 display; record real measurements in `profiles/quality_evaluation_template.csv`.
+- The quality scorer considers daylight, night and motion quality together. If measurements are absent it returns **no recommendation**, not imaginary FPS/latency numbers.
+- Optional Ultralytics/YOLO needs a user-supplied and **trusted local** model file, and explicit consent to analyze one frame. No automatic model downloads, stored video or always-on GPU jobs. PyTorch `.pt` weights can execute code during loading: never use untrusted files.
+- Available device choices are `cpu` and `cuda:0` if the RTX 3060 is actually powered/available; the helper never toggles GPU power.
+- Instructions: [Physical latency and image quality RU](docs/PHYSICAL_LATENCY_AND_QUALITY_RU.md) · [EN](docs/PHYSICAL_LATENCY_AND_QUALITY_EN.md).
+
+## YadroKreator integration
+In the separate YadroKreator Builds tab, tick **Use approved WifCam Helper preset** when deliberately opting in. Factory reads only `projects/wifcam_helper/profiles/t23n_lean.json`, allowlists `WIFICAM_WEBRTC=0|1`, and pins its copy per job before running the existing Thingino builder with `PUBLISH=0`. The helper itself never builds kernels, edits Linux `.config`, restarts the camera or overwrites an SD image. See [factory integration RU](https://github.com/musikfed/YadroKreator/blob/main/docs/WIFCAM_HELPER_INTEGRATION_RU.md).
+
 ## Camera tools
 The pinned Thingino Raptor includes `rad` (mic/audio), `rac` (speaker playback), and `microphone`, `speaker`, `play` wrappers; WIFICAM build requires them in SD rootfs. On the real camera you must verify physical audio, audio input routing/amp GPIO, mic acoustics, and amplifier, then measure the actual latency.
 
