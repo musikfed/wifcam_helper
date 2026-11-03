@@ -86,7 +86,7 @@ class Handler(BaseHTTPRequestHandler):
             data = json.loads(self.rfile.read(length))
             if not isinstance(data, dict):
                 raise ValueError("Object required")
-            keys = ("kind", "host", "user", "key", "url", "transport",
+            keys = ("kind", "host", "user", "key", "url", "alt_url", "transport",
                     "mic_consent", "speaker_consent")
             if set(data) - set(keys):
                 raise ValueError("Unsupported option")
@@ -97,7 +97,7 @@ class Handler(BaseHTTPRequestHandler):
                 result = run_test(
                     str(data.get("kind", "")), host=str(data.get("host", "")),
                     user=str(data.get("user", "root")), key=str(data.get("key", "")),
-                    url=str(data.get("url", "")), transport=str(data.get("transport", "tcp")),
+                    url=str(data.get("url", "")), alt_url=str(data.get("alt_url", "")), transport=str(data.get("transport", "tcp")),
                     mic_consent=data.get("mic_consent") is True,
                     speaker_consent=data.get("speaker_consent") is True,
                 )
