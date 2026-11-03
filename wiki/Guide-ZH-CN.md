@@ -42,3 +42,7 @@ RTSP 建连时间和解码 FPS 不等于镜头到屏幕的端到端延迟。请�
 - [Hombo3](https://github.com/musikfed/Hombo3_3.0.0): robot vision and STT/LLM/TTS
 
 **Hardware acceptance is still pending. GitHub CI is not an acoustic test.**
+
+## 实测画质、分类以及两种摄像头位置
+
+摄像头既可以安装为 Hombo3 的**机器人头部**，也可以作为**独立远程观察者**。未经外参标定，远程目标识别结果不能当作机器人本地坐标。请在白天、夜间、运动场景中实测，将真实数值写入 `profiles/quality_evaluation_template.csv`，运行 `python3 -m wifcam_helper quality-evaluate --csv /private/measurements.csv`。可选 YOLO 在 CORE 上运行，不在 T23N 上运行。
