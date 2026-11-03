@@ -42,3 +42,7 @@ Open `http://127.0.0.1:8765` or use `ssh -L 8765:127.0.0.1:8765 user@192.168.0.1
 - [Hombo3](https://github.com/musikfed/Hombo3_3.0.0): robot vision and STT/LLM/TTS
 
 **Hardware acceptance is still pending. GitHub CI is not an acoustic test.**
+
+## Measured image quality, optional vision and two camera positions
+
+The camera can act as Hombo3's **mounted head** or as an **independent remote observer**. Remote detections must not be assigned robot-local coordinates without calibrated extrinsics. To optimize delay, measure day/night/motion and fill `profiles/quality_evaluation_template.csv` with real values only. Run `python3 -m wifcam_helper quality-evaluate --csv /private/measurements.csv`. The optional YOLO classifier runs on CORE with trusted local weights, never on the T23N.
