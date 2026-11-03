@@ -87,7 +87,7 @@ class Handler(BaseHTTPRequestHandler):
             if not isinstance(data, dict):
                 raise ValueError("Object required")
             keys = ("kind", "host", "user", "key", "url", "alt_url", "transport",
-                    "mic_consent", "speaker_consent")
+                    "mic_consent", "speaker_consent", "vision_consent", "model", "device")
             if set(data) - set(keys):
                 raise ValueError("Unsupported option")
             if not TEST_LOCK.acquire(blocking=False):
@@ -100,6 +100,8 @@ class Handler(BaseHTTPRequestHandler):
                     url=str(data.get("url", "")), alt_url=str(data.get("alt_url", "")), transport=str(data.get("transport", "tcp")),
                     mic_consent=data.get("mic_consent") is True,
                     speaker_consent=data.get("speaker_consent") is True,
+                    vision_consent=data.get("vision_consent") is True,
+                    model=str(data.get("model", "")), device=str(data.get("device", "cpu")),
                 )
                 doc = store(result)
             finally:
