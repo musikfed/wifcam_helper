@@ -42,3 +42,7 @@ Le panneau est local : `http://127.0.0.1:8765`, ou tunnel SSH. Pour GitHub Wiki 
 - [Hombo3](https://github.com/musikfed/Hombo3_3.0.0): robot vision and STT/LLM/TTS
 
 **Hardware acceptance is still pending. GitHub CI is not an acoustic test.**
+
+## Qualité mesurée, classification et deux positions de caméra
+
+La caméra sert de **tête montée du robot** Hombo3 ou d'**observateur distant indépendant**. Sans calibration de pose, ses détections ne sont pas des coordonnées du robot. Mesurer jour/nuit/mouvement, compléter `profiles/quality_evaluation_template.csv` avec de vraies valeurs, puis lancer `python3 -m wifcam_helper quality-evaluate --csv /private/measurements.csv`. Le YOLO optionnel fonctionne sur CORE, pas sur T23N.
