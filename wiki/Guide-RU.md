@@ -42,3 +42,7 @@ Use only a verified camera IP and real ch0/ch1 RTSP URL. The microphone test hol
 - [Hombo3](https://github.com/musikfed/Hombo3_3.0.0): robot vision and STT/LLM/TTS
 
 **Hardware acceptance is still pending. GitHub CI is not an acoustic test.**
+
+## Измеренное качество, классификация, две позиции камеры
+
+Кадры с камеры могут поступать в Hombo3 как с **головы робота** или как с **независимой стационарной камеры**. Во втором случае не приписывайте обнаруженные объекты координатам робота без калибровки внешней позиции. Для минимальной задержки проверяйте day/night/motion и заполняйте `profiles/quality_evaluation_template.csv` только реальными значениями. Выполните `python3 -m wifcam_helper quality-evaluate --csv /private/measurements.csv`. Классификатор YOLO запускается отдельно на CORE, использует свою доверенную локальную модель и не заставляет T23N выполнять нейросеть.
