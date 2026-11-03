@@ -248,7 +248,7 @@ def export_preset(path: Path) -> dict:
 
 
 def run_test(kind: str, *, host: str = "", user: str = "root", key: str = "",
-             url: str = "", transport: str = "tcp", mic_consent: bool = False,
+             url: str = "", alt_url: str = "", transport: str = "tcp", mic_consent: bool = False,
              speaker_consent: bool = False) -> dict:
     if kind == "inventory":
         return inventory(host=host, user=user, key=key or None)
@@ -256,6 +256,9 @@ def run_test(kind: str, *, host: str = "", user: str = "root", key: str = "",
         return probe(url, transport)
     if kind == "video":
         return video_sample(url, transport)
+    if kind == "compare":
+        from .matrix import compare
+        return compare([u for u in (url, alt_url) if u])
     if kind == "microphone":
         return microphone(url, consent=mic_consent)
     if kind == "speaker":
@@ -265,12 +268,13 @@ def run_test(kind: str, *, host: str = "", user: str = "root", key: str = "",
 
 def main(argv: list[str] | None = None) -> int:
     parser = argparse.ArgumentParser(prog="wifcam-helper", description="Non-destructive T23N bench")
-    parser.add_argument("command", choices=["inventory", "probe", "video", "microphone", "speaker",
+    parser.add_argument("command", choices=["inventory", "probe", "video", "compare", "microphone", "speaker",
                                              "report", "export-preset", "web"])
     parser.add_argument("--host", default="")
     parser.add_argument("--user", default="root")
     parser.add_argument("--ssh-key", default="")
     parser.add_argument("--rtsp-url", default="")
+    parser.add_argument("--alt-rtsp-url", default="")
     parser.add_argument("--transport", choices=ALLOWED_TRANSPORTS, default="tcp")
     parser.add_argument("--mic-consent", action="store_true")
     parser.add_argument("--speaker-consent", action="store_true")
@@ -289,7 +293,7 @@ def main(argv: list[str] | None = None) -> int:
         else:
             result = store(run_test(
                 args.command, host=args.host, user=args.user, key=args.ssh_key,
-                url=args.rtsp_url, transport=args.transport,
+                url=args.rtsp_url, alt_url=args.alt_rtsp_url, transport=args.transport,
                 mic_consent=args.mic_consent, speaker_consent=args.speaker_consent,
             ))
         print(json.dumps(result, indent=2, ensure_ascii=False))
