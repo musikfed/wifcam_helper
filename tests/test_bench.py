@@ -88,6 +88,30 @@ class WifCamBenchTests(unittest.TestCase):
             self.assertNotIn(forbidden, data)
         self.assertIn('"127.0.0.1", PORT', (ROOT / "wifcam_helper/web.py").read_text())
 
+
+    def test_rtsp_matrix_is_readonly(self):
+        from wifcam_helper import matrix
+        with patch.object(matrix, "probe", return_value={"streams": [], "audio_track": True, "setup_s": 0.2}), patch.object(matrix, "video_sample", return_value={"decoded_frames": 60, "effective_fps_including_setup": 14.8}):
+            result = matrix.compare(["rtsp://127.0.0.1:554/ch0"])
+        self.assertEqual(len(result["results"]), 2)
+        self.assertFalse(result["physical_latency_measured"])
+        self.assertFalse(result["camera_settings_changed"])
+
+    def test_classifier_requires_consent_and_local_model(self):
+        from wifcam_helper.classifier import classify
+        with self.assertRaises(bench.BenchError):
+            classify("rtsp://127.0.0.1/ch0", model_path="/tmp/missing.pt")
+        with self.assertRaises(bench.BenchError):
+            classify("rtsp://127.0.0.1/ch0", model_path="/tmp/missing.pt", consent=True)
+
+    def test_menu_keys_translated_on_every_language(self):
+        import re
+        html = (ROOT / "wifcam_helper/ui.html").read_text(encoding="utf-8")
+        keys = set(re.findall(r'data-i18n="([^"]+)"', html))
+        loc = json.loads((ROOT / "locales/strings.json").read_text(encoding="utf-8"))
+        for language, strings in loc.items():
+            self.assertEqual(keys - set(strings), set(), language)
+
     def test_wiki_publish_guard_is_manual(self):
         script = (ROOT / "scripts/publish-wiki.sh").read_text()
         self.assertIn('WIFCAM_PUBLISH_WIKI', script)
