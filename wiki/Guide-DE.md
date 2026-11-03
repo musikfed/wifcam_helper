@@ -42,3 +42,7 @@ Dashboard nur auf `http://127.0.0.1:8765` oder SSH-Tunnel. GitHub Wiki: erste Ho
 - [Hombo3](https://github.com/musikfed/Hombo3_3.0.0): robot vision and STT/LLM/TTS
 
 **Hardware acceptance is still pending. GitHub CI is not an acoustic test.**
+
+## Echte Bildqualität, Klassifikation und zwei Kamerapositionen
+
+Die Kamera ist entweder **Roboterkopf** von Hombo3 oder **unabhängige Beobachtungskamera**. Remote-Erkennungen dürfen ohne kalibrierte Extrinsik nicht als Roboterkoordinaten behandelt werden. Tag/Nacht/Bewegung messen, nur reale Werte in `profiles/quality_evaluation_template.csv` eintragen und `python3 -m wifcam_helper quality-evaluate --csv /private/measurements.csv` ausführen. Lokales YOLO läuft auf CORE, nicht auf T23N.
