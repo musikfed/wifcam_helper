@@ -112,6 +112,25 @@ class WifCamBenchTests(unittest.TestCase):
         for language, strings in loc.items():
             self.assertEqual(keys - set(strings), set(), language)
 
+
+    def test_physical_quality_requires_three_scenes(self):
+        from wifcam_helper.quality import analyze_csv
+        csv_header = "profile,scene,transport,glass_to_glass_ms,image_quality_1_to_5,dropout_pct\n"
+        with tempfile.TemporaryDirectory() as d:
+            path = Path(d) / "measurements.csv"
+            path.write_text(csv_header + "ch0,day,tcp,200,4.0,0.5\n")
+            self.assertIsNone(analyze_csv(path)["recommended_if_hardware_verified"])
+            path.write_text(csv_header +
+                "ch0,day,tcp,200,4.0,0.5\n"
+                "ch0,night,tcp,250,3.0,0.5\n"
+                "ch0,motion,tcp,230,4.0,1.0\n")
+            result = analyze_csv(path)
+            self.assertEqual(result["recommended_if_hardware_verified"], "ch0/tcp")
+            self.assertFalse(result["camera_configuration_modified"])
+            path.write_text(csv_header + "ch0,day,tcp,0,5,0\n")
+            with self.assertRaises(bench.BenchError):
+                analyze_csv(path)
+
     def test_wiki_publish_guard_is_manual(self):
         script = (ROOT / "scripts/publish-wiki.sh").read_text()
         self.assertIn('WIFCAM_PUBLISH_WIKI', script)
