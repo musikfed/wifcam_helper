@@ -1,7 +1,7 @@
 #!/usr/bin/env bash
 set -euo pipefail
 # Wiki is an independent Git repo. User must create initial wiki page on GitHub.
-if [[ "$WIFCAM_PUBLISH_WIKI" != "YES" ]]; then
+if [[ "$(printenv WIFCAM_PUBLISH_WIKI 2>/dev/null || true)" != "YES" ]]; then
   echo "Explicit WIFCAM_PUBLISH_WIKI=YES required after reviewing wiki/*.md" >&2
   exit 2
 fi
