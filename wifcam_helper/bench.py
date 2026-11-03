@@ -273,7 +273,7 @@ def run_test(kind: str, *, host: str = "", user: str = "root", key: str = "",
 def main(argv: list[str] | None = None) -> int:
     parser = argparse.ArgumentParser(prog="wifcam-helper", description="Non-destructive T23N bench")
     parser.add_argument("command", choices=["inventory", "probe", "video", "compare", "microphone", "speaker", "classification",
-                                             "report", "export-preset", "web"])
+                                             "report", "export-preset", "quality-evaluate", "web"])
     parser.add_argument("--host", default="")
     parser.add_argument("--user", default="root")
     parser.add_argument("--ssh-key", default="")
@@ -286,6 +286,7 @@ def main(argv: list[str] | None = None) -> int:
     parser.add_argument("--model", default="")
     parser.add_argument("--device", choices=("cpu", "cuda:0"), default="cpu")
     parser.add_argument("--output", default="")
+    parser.add_argument("--csv", default="")
     args = parser.parse_args(argv)
     try:
         if args.command == "web":
@@ -297,6 +298,11 @@ def main(argv: list[str] | None = None) -> int:
         elif args.command == "export-preset":
             dst = Path(args.output) if args.output else STATE / "build-preset.json"
             result = export_preset(dst)
+        elif args.command == "quality-evaluate":
+            if not args.csv:
+                raise BenchError("Provide --csv with real day/night/motion glass-to-glass measurements")
+            from .quality import analyze_csv
+            result = store(analyze_csv(Path(args.csv)))
         else:
             result = store(run_test(
                 args.command, host=args.host, user=args.user, key=args.ssh_key,
