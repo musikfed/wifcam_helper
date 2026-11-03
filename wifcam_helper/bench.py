@@ -6,6 +6,7 @@ import datetime as dt
 import ipaddress
 import json
 import math
+import shlex
 import os
 from pathlib import Path
 import re
@@ -108,7 +109,7 @@ done
 
 
 def inventory(*, host: str, user: str = "root", key: str | None = None) -> dict:
-    out, _, wall = _run(ssh_argv(host, user, key) + ["sh", "-c", INVENTORY_COMMAND], timeout=14)
+    out, _, wall = _run(ssh_argv(host, user, key) + ["sh -c " + shlex.quote(INVENTORY_COMMAND)], timeout=14)
     items = {}
     for line in out.decode("utf-8", "replace").splitlines():
         if "=" in line:
