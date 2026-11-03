@@ -1,0 +1,30 @@
+name: WifCam Helper · Python 3.12 / i18n / secure bench
+on:
+  push:
+    branches: [main]
+  pull_request:
+    branches: [main]
+  workflow_dispatch:
+jobs:
+  tests:
+    runs-on: ubuntu-24.04
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - name: Syntax & runtime regression tests
+        run: |
+          python -m compileall -q wifcam_helper tests
+          python -m unittest discover -s tests -p 'test_*.py' -v
+          bash -n scripts/publish-wiki.sh scripts/verify-host.sh
+          python -m json.tool locales/strings.json >/dev/null
+          python -m json.tool profiles/t23n_lean.json >/dev/null
+      - name: Refuse secrets and published media
+        run: |
+          python - <<'PY'
+          from pathlib import Path
+          forbidden = {'.pem','.key','.wav','.pcm','.mp4','.img','.bin'}
+          bad = [str(p) for p in Path('.').rglob('*') if p.is_file() and p.suffix.lower() in forbidden and '.git' not in p.parts]
+          assert not bad, bad
+          PY
