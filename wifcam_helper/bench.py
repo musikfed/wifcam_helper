@@ -249,7 +249,8 @@ def export_preset(path: Path) -> dict:
 
 def run_test(kind: str, *, host: str = "", user: str = "root", key: str = "",
              url: str = "", alt_url: str = "", transport: str = "tcp", mic_consent: bool = False,
-             speaker_consent: bool = False) -> dict:
+             speaker_consent: bool = False, vision_consent: bool = False,
+             model: str = "", device: str = "cpu") -> dict:
     if kind == "inventory":
         return inventory(host=host, user=user, key=key or None)
     if kind == "probe":
@@ -263,12 +264,15 @@ def run_test(kind: str, *, host: str = "", user: str = "root", key: str = "",
         return microphone(url, consent=mic_consent)
     if kind == "speaker":
         return speaker(host=host, user=user, key=key or None, consent=speaker_consent)
+    if kind == "classification":
+        from .classifier import classify
+        return classify(url, model_path=model, device=device, consent=vision_consent)
     raise BenchError("Unsupported test")
 
 
 def main(argv: list[str] | None = None) -> int:
     parser = argparse.ArgumentParser(prog="wifcam-helper", description="Non-destructive T23N bench")
-    parser.add_argument("command", choices=["inventory", "probe", "video", "compare", "microphone", "speaker",
+    parser.add_argument("command", choices=["inventory", "probe", "video", "compare", "microphone", "speaker", "classification",
                                              "report", "export-preset", "web"])
     parser.add_argument("--host", default="")
     parser.add_argument("--user", default="root")
@@ -278,6 +282,9 @@ def main(argv: list[str] | None = None) -> int:
     parser.add_argument("--transport", choices=ALLOWED_TRANSPORTS, default="tcp")
     parser.add_argument("--mic-consent", action="store_true")
     parser.add_argument("--speaker-consent", action="store_true")
+    parser.add_argument("--vision-consent", action="store_true")
+    parser.add_argument("--model", default="")
+    parser.add_argument("--device", choices=("cpu", "cuda:0"), default="cpu")
     parser.add_argument("--output", default="")
     args = parser.parse_args(argv)
     try:
@@ -295,6 +302,7 @@ def main(argv: list[str] | None = None) -> int:
                 args.command, host=args.host, user=args.user, key=args.ssh_key,
                 url=args.rtsp_url, alt_url=args.alt_rtsp_url, transport=args.transport,
                 mic_consent=args.mic_consent, speaker_consent=args.speaker_consent,
+                vision_consent=args.vision_consent, model=args.model, device=args.device,
             ))
         print(json.dumps(result, indent=2, ensure_ascii=False))
         return 0
