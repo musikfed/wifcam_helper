@@ -43,6 +43,13 @@ python3 -m wifcam_helper classification --rtsp-url rtsp://CAMERA_IP:554/ch0 --mo
 ## YadroKreator integration
 In the separate YadroKreator Builds tab, tick **Use approved WifCam Helper preset** when deliberately opting in. Factory reads only `projects/wifcam_helper/profiles/t23n_lean.json`, allowlists `WIFICAM_WEBRTC=0|1`, and pins its copy per job before running the existing Thingino builder with `PUBLISH=0`. The helper itself never builds kernels, edits Linux `.config`, restarts the camera or overwrites an SD image. See [factory integration RU](https://github.com/musikfed/YadroKreator/blob/main/docs/WIFCAM_HELPER_INTEGRATION_RU.md).
 
+Before selecting the factory checkbox, confirm all sibling projects and the strict build-option allowlist:
+```sh
+cd /1tbdisk/PegineLab/projects/wifcam_helper
+bash scripts/check-factory-integration.sh
+```
+This is read-only; it does not compile, install firmware or publish a candidate.
+
 ## Camera tools
 The pinned Thingino Raptor includes `rad` (mic/audio), `rac` (speaker playback), and `microphone`, `speaker`, `play` wrappers; WIFICAM build requires them in SD rootfs. On the real camera you must verify physical audio, audio input routing/amp GPIO, mic acoustics, and amplifier, then measure the actual latency.
 
