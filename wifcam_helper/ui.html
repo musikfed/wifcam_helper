@@ -61,9 +61,11 @@ pre{background:#0e1729;color:#d1fae5;padding:17px;border-radius:13px;white-space
 <section class="panel" id="video"><div class="card"><h2 data-i18n="video"></h2>
 <div class="formgrid"><div><label for="url" data-i18n="url"></label><input id="url" placeholder="rtsp://CAMERA_IP:554/ch0" autocomplete="off" spellcheck="false"></div>
 <div><label for="transport" data-i18n="transport"></label><select id="transport"><option value="tcp">TCP</option><option value="udp">UDP</option></select></div></div>
+<div style="margin-top:12px"><label for="altUrl" data-i18n="altUrl"></label><input id="altUrl" placeholder="rtsp://CAMERA_IP:554/ch1" autocomplete="off" spellcheck="false"></div>
 <p class="muted" data-i18n="rtspHelp"></p><div class="test-row">
 <button class="primary" data-kind="probe" data-i18n="probe"></button>
-<button class="primary" data-kind="video" data-i18n="videoTest"></button></div>
+<button class="primary" data-kind="video" data-i18n="videoTest"></button>
+<button class="primary" data-kind="compare" data-i18n="compare"></button></div>
 <div class="statusline" data-i18n="videoNote"></div></div></section>
 <section class="panel" id="audio"><div class="card"><h2 data-i18n="audio"></h2>
 <p class="muted" data-i18n="audioNote"></p>
@@ -110,7 +112,7 @@ async function loadReport(){
 async function run(kind){
   if(busy)return;
   const payload={kind,host:el('host').value.trim(),user:el('user').value.trim(),
-    key:el('key').value.trim(),url:el('url').value.trim(),transport:el('transport').value,
+    key:el('key').value.trim(),url:el('url').value.trim(),alt_url:el('altUrl').value.trim(),transport:el('transport').value,
     mic_consent:el('micConsent').checked,speaker_consent:el('speakerConsent').checked};
   if(kind==='microphone'&&!payload.mic_consent){alert(dict[lang].micConsent);return}
   if(kind==='speaker'&&!payload.speaker_consent){alert(dict[lang].speakerConsent);return}
