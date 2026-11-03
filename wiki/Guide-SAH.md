@@ -42,3 +42,7 @@ RTSP холбонуута уонна FPS объективтан экранҥа �
 - [Hombo3](https://github.com/musikfed/Hombo3_3.0.0): robot vision and STT/LLM/TTS
 
 **Hardware acceptance is still pending. GitHub CI is not an acoustic test.**
+
+## Видео качество, классификация уонна камера икки уруктааһына
+
+Камера Hombo3 **робот төбөтө** эбэтэр **атынан байыы камера** буолуон сөп. Атын камера координататын робот координататыгар калибровка суох кыайбат. Day/night/motion тургутууну `profiles/quality_evaluation_template.csv`-га чахчы өлчөмнөрүнэн толор уонна `python3 -m wifcam_helper quality-evaluate --csv /private/measurements.csv` сал. YOLO классификатор CORE-га үлэлиир, T23N-ҥа суох.
