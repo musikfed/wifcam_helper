@@ -53,7 +53,9 @@
     "privacy": "Аудиофрагмент анализируется в памяти, в Git не публикуется.",
     "model": "Galayou G2 · SC2336 · ATBM6012BX",
     "snapshot": "Кадры не сохраняются; тест видео только декодирует поток.",
-    "authNote": "Доступ к веб-стенду только через 127.0.0.1 или SSH-туннель."
+    "authNote": "Доступ к веб-стенду только через 127.0.0.1 или SSH-туннель.",
+    "compare": "Сравнить TCP/UDP и потоки",
+    "altUrl": "Второй RTSP-поток (если существует)"
   },
   "en": {
     "brand": "PegineLab · WifCam Helper",
@@ -109,7 +111,9 @@
     "privacy": "Audio is analyzed in RAM only and never published to Git.",
     "model": "Galayou G2 · SC2336 · ATBM6012BX",
     "snapshot": "No frames saved; video testing decodes the stream only.",
-    "authNote": "Dashboard is available only on 127.0.0.1 or through an SSH tunnel."
+    "authNote": "Dashboard is available only on 127.0.0.1 or through an SSH tunnel.",
+    "compare": "Compare TCP/UDP and streams",
+    "altUrl": "Second RTSP stream (if available)"
   },
   "be": {
     "brand": "PegineLab · WifCam Helper",
@@ -165,7 +169,9 @@
     "privacy": "Гук аналізуецца ў памяці, без публікацыі ў Git.",
     "model": "Galayou G2 · SC2336 · ATBM6012BX",
     "snapshot": "Кадры не захоўваюцца.",
-    "authNote": "Вэб-стэнд толькі на 127.0.0.1 або праз SSH."
+    "authNote": "Вэб-стэнд толькі на 127.0.0.1 або праз SSH.",
+    "compare": "Параўнаць TCP/UDP і патокі",
+    "altUrl": "Другі RTSP-паток (калі існуе)"
   },
   "sah": {
     "brand": "PegineLab · WifCam Helper",
@@ -221,7 +227,9 @@
     "privacy": "Тыа оперативнай паамакка тургутуллар, Git-кэ суруллубат.",
     "model": "Galayou G2 · SC2336 · ATBM6012BX",
     "snapshot": "Кадрдар суруллубаттар.",
-    "authNote": "Веб-стенд 127.0.0.1 эбэтэр SSH-туннель."
+    "authNote": "Веб-стенд 127.0.0.1 эбэтэр SSH-туннель.",
+    "compare": "TCP/UDP уонна ағымнары тэҥнээ",
+    "altUrl": "Иккис RTSP ағым (баар буоллаҕына)"
   },
   "de": {
     "brand": "PegineLab · WifCam Helper",
@@ -277,7 +285,9 @@
     "privacy": "Audio nur im RAM analysiert, nicht in Git veröffentlicht.",
     "model": "Galayou G2 · SC2336 · ATBM6012BX",
     "snapshot": "Keine Videobilder gespeichert.",
-    "authNote": "Nur 127.0.0.1 oder SSH-Tunnel."
+    "authNote": "Nur 127.0.0.1 oder SSH-Tunnel.",
+    "compare": "TCP/UDP und Streams vergleichen",
+    "altUrl": "Zweiter RTSP-Stream (falls verfügbar)"
   },
   "fr": {
     "brand": "PegineLab · WifCam Helper",
@@ -333,7 +343,9 @@
     "privacy": "Audio analysé en mémoire et jamais publié sur Git.",
     "model": "Galayou G2 · SC2336 · ATBM6012BX",
     "snapshot": "Aucune image enregistrée.",
-    "authNote": "Accès local 127.0.0.1 ou tunnel SSH."
+    "authNote": "Accès local 127.0.0.1 ou tunnel SSH.",
+    "compare": "Comparer TCP/UDP et les flux",
+    "altUrl": "Deuxième flux RTSP (si disponible)"
   },
   "zh-CN": {
     "brand": "PegineLab · WifCam Helper",
@@ -389,6 +401,8 @@
     "privacy": "音频仅在内存中分析，不上传到 Git。",
     "model": "Galayou G2 · SC2336 · ATBM6012BX",
     "snapshot": "不保存视频帧。",
-    "authNote": "仅允许 127.0.0.1 或 SSH 隧道访问。"
+    "authNote": "仅允许 127.0.0.1 或 SSH 隧道访问。",
+    "compare": "比较 TCP/UDP 和视频流",
+    "altUrl": "第二路 RTSP 视频流（如有）"
   }
 }
