@@ -55,7 +55,11 @@
     "snapshot": "Кадры не сохраняются; тест видео только декодирует поток.",
     "authNote": "Доступ к веб-стенду только через 127.0.0.1 или SSH-туннель.",
     "compare": "Сравнить TCP/UDP и потоки",
-    "altUrl": "Второй RTSP-поток (если существует)"
+    "altUrl": "Второй RTSP-поток (если существует)",
+    "visionTest": "Проверить классификатор YOLO",
+    "visionModel": "Путь к локальной модели YOLO (.pt/.onnx)",
+    "visionDevice": "Вычислитель классификации",
+    "visionConsent": "Разрешаю обработать один кадр локально на CORE без сохранения"
   },
   "en": {
     "brand": "PegineLab · WifCam Helper",
@@ -113,7 +117,11 @@
     "snapshot": "No frames saved; video testing decodes the stream only.",
     "authNote": "Dashboard is available only on 127.0.0.1 or through an SSH tunnel.",
     "compare": "Compare TCP/UDP and streams",
-    "altUrl": "Second RTSP stream (if available)"
+    "altUrl": "Second RTSP stream (if available)",
+    "visionTest": "Test YOLO classifier",
+    "visionModel": "Local YOLO model path (.pt/.onnx)",
+    "visionDevice": "Classification device",
+    "visionConsent": "I consent to processing one frame locally on CORE without saving it"
   },
   "be": {
     "brand": "PegineLab · WifCam Helper",
@@ -171,7 +179,11 @@
     "snapshot": "Кадры не захоўваюцца.",
     "authNote": "Вэб-стэнд толькі на 127.0.0.1 або праз SSH.",
     "compare": "Параўнаць TCP/UDP і патокі",
-    "altUrl": "Другі RTSP-паток (калі існуе)"
+    "altUrl": "Другі RTSP-паток (калі існуе)",
+    "visionTest": "Праверыць класіфікатар YOLO",
+    "visionModel": "Шлях да лакальнай мадэлі (.pt/.onnx)",
+    "visionDevice": "Прылада класіфікацыі",
+    "visionConsent": "Дазваляю апрацаваць адзін кадр лакальна без захавання"
   },
   "sah": {
     "brand": "PegineLab · WifCam Helper",
@@ -229,7 +241,11 @@
     "snapshot": "Кадрдар суруллубаттар.",
     "authNote": "Веб-стенд 127.0.0.1 эбэтэр SSH-туннель.",
     "compare": "TCP/UDP уонна ағымнары тэҥнээ",
-    "altUrl": "Иккис RTSP ағым (баар буоллаҕына)"
+    "altUrl": "Иккис RTSP ағым (баар буоллаҕына)",
+    "visionTest": "YOLO классификаторы тургут",
+    "visionModel": "Локальнай модель суола (.pt/.onnx)",
+    "visionDevice": "Классификация устройството",
+    "visionConsent": "Биир кадры локальнай тургутууга сөбүлэһэбин, суруллубат"
   },
   "de": {
     "brand": "PegineLab · WifCam Helper",
@@ -287,7 +303,11 @@
     "snapshot": "Keine Videobilder gespeichert.",
     "authNote": "Nur 127.0.0.1 oder SSH-Tunnel.",
     "compare": "TCP/UDP und Streams vergleichen",
-    "altUrl": "Zweiter RTSP-Stream (falls verfügbar)"
+    "altUrl": "Zweiter RTSP-Stream (falls verfügbar)",
+    "visionTest": "YOLO-Klassifikator testen",
+    "visionModel": "Lokaler YOLO-Modellpfad (.pt/.onnx)",
+    "visionDevice": "Klassifikationsgerät",
+    "visionConsent": "Ich erlaube die lokale Analyse eines Einzelbildes ohne Speicherung"
   },
   "fr": {
     "brand": "PegineLab · WifCam Helper",
@@ -345,7 +365,11 @@
     "snapshot": "Aucune image enregistrée.",
     "authNote": "Accès local 127.0.0.1 ou tunnel SSH.",
     "compare": "Comparer TCP/UDP et les flux",
-    "altUrl": "Deuxième flux RTSP (si disponible)"
+    "altUrl": "Deuxième flux RTSP (si disponible)",
+    "visionTest": "Tester le classificateur YOLO",
+    "visionModel": "Chemin du modèle YOLO local (.pt/.onnx)",
+    "visionDevice": "Appareil de classification",
+    "visionConsent": "J'autorise l'analyse locale d'une image, sans conservation"
   },
   "zh-CN": {
     "brand": "PegineLab · WifCam Helper",
@@ -403,6 +427,10 @@
     "snapshot": "不保存视频帧。",
     "authNote": "仅允许 127.0.0.1 或 SSH 隧道访问。",
     "compare": "比较 TCP/UDP 和视频流",
-    "altUrl": "第二路 RTSP 视频流（如有）"
+    "altUrl": "第二路 RTSP 视频流（如有）",
+    "visionTest": "测试 YOLO 目标分类",
+    "visionModel": "本地 YOLO 模型路径 (.pt/.onnx)",
+    "visionDevice": "分类计算设备",
+    "visionConsent": "我同意在 CORE 本地处理一帧图像，不保存图片"
   }
 }
