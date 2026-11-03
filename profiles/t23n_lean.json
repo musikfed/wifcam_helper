@@ -1,0 +1,10 @@
+{
+  "schema": "peginelab.wifcam-helper.build-preset.v1",
+  "camera": "galayou_g2_t23n_sc2336_atbm6012bx",
+  "branch": "mymarrchWFcam",
+  "build_env": {
+    "WIFICAM_WEBRTC": "0"
+  },
+  "requires_hardware_verification": true,
+  "notes": "Conservative default; RTSP+SD/MMC+ATBM6012BX+DWC2+ISP+RAD+RAC+SSH+CGI preserved; WebTorrent and USB webcam excluded"
+}
