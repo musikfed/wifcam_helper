@@ -24,6 +24,12 @@ uv run --no-project python3 -m wifcam_helper web
 - `profiles/t23n_lean.json`: **allowlisted, conservative build profile**, staged for YadroKreator (does not modify the kernel).
 - `tests/`: hardware-free CI exercises for security, UTF-8 locale completeness and recommendation schema.
 
+## Разговорный режим — в Hombo3 / Conversational mode lives in Hombo3
+
+**RU:** `WifCam Helper` — **диагностический стенд**, а не отдельный голосовой ассистент. Его кнопки `classification` / `observe` предназначены для проверки реального RTSP и качества моделей, **не для управления зрением в разговоре**. Для рабочего диалога Hombo3 использует существующий `CameraHub` и локальный YOLO на Acer, а LLM самостоятельно решает, когда подключать OpenCV, YOLO, VLM на CORE и визуальную память. Голосовые и текстовые реплики продолжают общую сессию; память записывается только после подтверждения. Реализация вынесена в [Hombo3 PR #5](https://github.com/musikfed/Hombo3_3.0.0/pull/5), пока как черновик до аппаратной проверки.
+
+**EN:** The Helper buttons are bench diagnostics, **not the actual conversational vision workflow**. Hombo3 owns mic/STT, dialogue, camera frame sharing, context-aware tool selection, speech output, and opt-in visual memory. See the [Hombo3 conversational vision pull request](https://github.com/musikfed/Hombo3_3.0.0/pull/5). Continuous wake/VAD remains hardware-dependent and unverified.
+
 ## Real object counting on Acer Swift 3 (optional) / Реальный подсчёт объектов
 
 **RU:** В веб-интерфейсе «Видео» появилась отдельная команда «Посчитать объекты на реальных кадрах». Она считывает 1–5 настоящих RTSP-кадров, запускает локальные веса YOLO nano на CPU Acer и возвращает `visible_counts`, классы и рамки. Это **не заглушка**, но и не бесконечный трекинг: по кадрам нет суммирования уникальных предметов. Вторая кнопка, только с отдельным согласием, отправляет последний кадр через VPN/SSH-туннель на уже работающую Ollama `qwen2.5vl:7b` на Huananzhi CORE и возвращает её ответ. Веса YOLO нужно самостоятельно получить из доверенного источника; Helper их не скачивает. Кадры на диск не сохраняются, камера не перепрошивается.
