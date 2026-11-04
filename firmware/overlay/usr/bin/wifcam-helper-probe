@@ -1,0 +1,10 @@
+#!/bin/sh
+# Small camera-side capability probe; no recordings or arbitrary commands.
+set -eu
+status() { if command -v "$1" >/dev/null 2>&1; then printf true; else printf false; fi; }
+boot=false
+[ ! -f /run/wifcam-helper-booted ] || boot=true
+mic=$(status rad)
+speaker=$(status rac)
+video=$(status rvd)
+printf '{"schema":"peginelab.camera-head.v1","firmware":"wifcam_helper","platform":"ingenic_t23n","helper_booted":%s,"microphone_transport":%s,"speaker_transport":%s,"video_transport":%s,"hardware_verified":false,"inference":"external_core"}\n' "$boot" "$mic" "$speaker" "$video"
