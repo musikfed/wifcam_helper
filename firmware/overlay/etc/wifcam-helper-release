@@ -1,0 +1,5 @@
+PEGINELAB_HELPER_FIRMWARE_V1
+camera=ingenic_t23n
+role=remote_audio_video_head
+core_inference=external
+hardware_verified=no
