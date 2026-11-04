@@ -1,0 +1,56 @@
+{
+  "schema": "peginelab.project.v1",
+  "project": {
+    "name": "WifCam Helper — T23N camera-head SD firmware",
+    "repository": "musikfed/wifcam_helper",
+    "branch": "main",
+    "mode": "build"
+  },
+  "description": "Dedicated Ingenic T23N camera-head SD firmware (voice/video transports on camera; LLM/CV on CORE)",
+  "platform": {
+    "architecture": "mipsel",
+    "board": "GV-T23-PTZ-MAIN-V2.0",
+    "toolchain": "Thingino/Buildroot MIPS"
+  },
+  "targets": [
+    "galayou_g2_t23n_sc2336_atbm6012bx"
+  ],
+  "pipeline": {
+    "adapter": "t23n_helper_sd",
+    "entrypoint": "firmware/README_RU.md"
+  },
+  "outputs": [
+    {
+      "type": "img",
+      "path": "out/candidate-sd/thingino-t23-sd.bin"
+    }
+  ],
+  "monitoring": {
+    "signals": [
+      "build_status",
+      "source_sha",
+      "image_sha256",
+      "camera_audio",
+      "camera_video"
+    ],
+    "notes": "Built-in camera capability endpoint; hardware must be verified separately"
+  },
+  "docs": [
+    "firmware/README_RU.md",
+    "firmware/README_EN.md",
+    "README.md"
+  ],
+  "extensions": {
+    "peginelab.camera": {
+      "base_repository": "musikfed/wificam_T23N",
+      "base_branch": "mymarrchWFcam",
+      "helper_overlay": "firmware/overlay",
+      "device_roles": [
+        "microphone",
+        "speaker",
+        "camera"
+      ],
+      "inference_host": "CORE"
+    }
+  }
+}

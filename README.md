@@ -1,6 +1,14 @@
-# PegineLab WifCam Helper · T23N Camera Test Bench
+# PegineLab WifCam Helper · T23N Camera-Head Firmware + Test Bench
 
 **EN:** Local-first testing of the real Galayou G2 / Ingenic T23N camera, used alone or as Hombo3's robot head. **RU:** Автономный стенд проверки камеры, микрофона, динамика, RTSP и задержек. No cloud, no remote dependency, no uncontrolled flashing.
+
+## Отдельная прошивка WifCam Helper (T23N / SD)
+
+Открой в YadroKreator **WifCam Helper** (третья сборочная линия, рядом с WIFICAM и Irila). Кнопка **«Создать прошивку Helper»** фиксирует два SHA: `musikfed/wifcam_helper/main` и `musikfed/wificam_T23N/mymarrchWFcam`, добавляет `firmware/overlay` в изолированный исходник WIFICAM и запускает настоящий Thingino/Buildroot SD-билдер с `PUBLISH=0`. Выходной IMG, лог, проверка и удаление находятся внутри этой вкладки — отдельно от WIFICAM 0.1_test. См. [инструкцию прошивки](firmware/README_RU.md) и [схему проекта](peginelab.project.json).
+
+На камере: `/etc/wifcam-helper-release`, `S92wifcam-helper`, `wifcam-helper-probe`, `/cgi-bin/helper-capabilities`. Доступность команд rad/rac/rvd — **не** гарантия физической работы микрофона, динамика и SC2336. CV/STT/LLM/TTS и визуальная память выполняются на CORE, не на 64 МБ ОЗУ T23N. Голосовой диалог и маршрутизация аудио/видео требуют отдельной аппаратной и интеграционной проверки после первой прошивки.
+
+## Диагностический стенд на CORE (Python)
 
 ## Quick start · Ubuntu 24.04 / Python 3.12 / uv 0.12
 ```sh
@@ -41,18 +49,16 @@ python3 -m wifcam_helper classification --rtsp-url rtsp://CAMERA_IP:554/ch0 --mo
 - Instructions: [Physical latency and image quality RU](docs/PHYSICAL_LATENCY_AND_QUALITY_RU.md) · [EN](docs/PHYSICAL_LATENCY_AND_QUALITY_EN.md).
 
 ## YadroKreator integration
-In the separate YadroKreator Builds tab, tick **Use approved WifCam Helper preset** when deliberately opting in. Factory reads only `projects/wifcam_helper/profiles/t23n_lean.json`, allowlists `WIFICAM_WEBRTC=0|1`, and pins its copy per job before running the existing Thingino builder with `PUBLISH=0`. The helper itself never builds kernels, edits Linux `.config`, restarts the camera or overwrites an SD image. See [factory integration RU](https://github.com/musikfed/YadroKreator/blob/main/docs/WIFCAM_HELPER_INTEGRATION_RU.md).
 
-Before selecting the factory checkbox, confirm all sibling projects and the strict build-option allowlist:
-```sh
-cd /1tbdisk/PegineLab/projects/wifcam_helper
-bash scripts/check-factory-integration.sh
-```
-This is read-only; it does not compile, install firmware or publish a candidate.
+**Firmware lane:** Helper owns independent `t23n_helper_sd` Buildroot image, own jobs, SHA pins, preflight, log and artifact store. Rootfs includes allowlisted camera-side shell/CGI overlay; no host Python in the camera rootfs. Normal WIFICAM stays a separate standard firmware.
+
+**Optional legacy host-side preset:** `profiles/t23n_lean.json` is kept for compatibility, but it does not replace the dedicated camera-head firmware. New builds should use the separate Helper tab, not a WIFICAM checkbox.
+
+`scripts/check-factory-integration.sh` is a read-only compatibility audit; it does not compile or flash.
 
 ## Independent Helper service & SQLite history / Отдельная служба и БД
 
-**RU:** Helper — отдельный проект, не вкладка сборки ядра. Его диагностика сохраняется в своей SQLite `~/.local/state/wifcam-helper/history.sqlite3`, включая однократный импорт старого `last-report.json`. База фабрики `factory-state/factory.sqlite3` **не используется**. В «Отчётах» доступна история последних 20 запусков, на `/api/history-summary` — общее количество. Порт Helper — только `127.0.0.1:8765`.
+**RU:** Python-стенд Helper — часть проекта, но не прошивка. Диагностика стенда сохраняется в своей SQLite `~/.local/state/wifcam-helper/history.sqlite3`, включая однократный импорт старого `last-report.json`. База фабрики `factory-state/factory.sqlite3` **не используется**. В «Отчётах» доступна история последних 20 запусков, на `/api/history-summary` — общее количество. Порт Helper — только `127.0.0.1:8765`.
 
 После обновления собственного Git checkout на Ubuntu CORE можно зарегистрировать **только его** пользовательскую службу:
 
@@ -65,7 +71,7 @@ bash scripts/helper-service.sh restart
 bash scripts/helper-service.sh stop
 ```
 
-С Acer Windows доступ через SSH-туннель `ssh -N -L 8765:127.0.0.1:8765 user@192.168.0.100` и браузер `http://127.0.0.1:8765`. Не публикуй порт наружу. Никаких контейнеров, ключей Wi-Fi, GPU, прошивок или сервисов ACHEWIW установка не трогает. YadroKreator показывает **только состояние** этого сервиса и отдельной базы.
+С Acer Windows доступ через SSH-туннель `ssh -N -L 8765:127.0.0.1:8765 user@192.168.0.100` и браузер `http://127.0.0.1:8765`. Не публикуй порт наружу. Никаких контейнеров, ключей Wi-Fi, GPU, прошивок или сервисов ACHEWIW установка не трогает. YadroKreator показывает состояние этого сервиса во вложенном блоке **«Аппаратный испытательный стенд»** внутри сборочной вкладки Helper.
 
 **EN:** All diagnostic reports now persist in a private Helper-only SQLite DB and remain separate from factory build history. Existing legacy last-report JSON is preserved. A dedicated loopback-only user systemd unit can be installed explicitly; its lifecycle is independent of the firmware builder and all other containers.
 
@@ -73,7 +79,7 @@ bash scripts/helper-service.sh stop
 The pinned Thingino Raptor includes `rad` (mic/audio), `rac` (speaker playback), and `microphone`, `speaker`, `play` wrappers; WIFICAM build requires them in SD rootfs. On the real camera you must verify physical audio, audio input routing/amp GPIO, mic acoustics, and amplifier, then measure the actual latency.
 
 ## Boundaries
-Repo roles: `wifcam_helper` for **testing only**; `wificam_T23N` for firmware and pinned source; `YadroKreator` for reproducible jobs; `Hombo3_3.0.0` for STT/LLM/TTS/robot. Tests **never** flash SD, restart Thingino, or run a 32-thread build. GPU (RTX 3060 12GB) is for optional offline CV/STT/TTS on the CORE host, not the camera.
+Repo roles: `wifcam_helper` for **the distinct camera-head firmware overlay and physical testing**; `wificam_T23N` for the pinned generic camera firmware base; `YadroKreator` for reproducible per-project SD jobs; `Hombo3_3.0.0` for off-device STT/LLM/TTS/robot. Tests **never** flash SD, restart Thingino, or run a 32-thread build. GPU (RTX 3060 12GB) is for optional offline CV/STT/TTS on the CORE host, not the camera.
 
 Private camera credentials, Wi-Fi keys, SSH keys, certificates (`fullchain.pem`, `privkey.pem`) and reports belong **outside Git**. Web UI binds only to `127.0.0.1`; remote access through SSH tunnel or independently configured authenticated reverse proxy. Do not move TLS private keys into this project.
 
