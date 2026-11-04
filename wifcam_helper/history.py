@@ -28,34 +28,33 @@ def _connect(state: Path):
     # in ThreadingHTTPServer while concurrent diagnostics are running.
     con = sqlite3.connect(db_path, timeout=10)
     try:
-        try:
-            con.execute("PRAGMA journal_mode=WAL")
-            con.execute("PRAGMA busy_timeout=10000")
-            con.execute(
-                "CREATE TABLE IF NOT EXISTS reports ("
-                "id TEXT PRIMARY KEY, created_utc TEXT NOT NULL, "
-                "test_name TEXT NOT NULL, payload TEXT NOT NULL)"
-            )
-            # Idempotently import the old last report without deleting it.
-            legacy = state / "last-report.json"
-            if legacy.is_file() and not legacy.is_symlink():
-                try:
-                    doc = json.loads(legacy.read_text(encoding="utf-8"))
-                    if (isinstance(doc, dict)
-                        and doc.get("schema") == "peginelab.wifcam-helper.report.v1"
-                        and isinstance(doc.get("result"), dict)):
-                        con.execute(
-                            "INSERT OR IGNORE INTO reports VALUES (?,?,?,?)",
-                            ("legacy-last-report", str(doc.get("created_utc", "")),
-                             str(doc["result"].get("test", "legacy")),
-                             json.dumps(doc, ensure_ascii=False)),
-                        )
-                except (json.JSONDecodeError, UnicodeError):
-                    # Keep malformed original intact for manual inspection.
-                    pass
-            con.commit()
-            yield con
-            con.commit()
+        con.execute("PRAGMA journal_mode=WAL")
+        con.execute("PRAGMA busy_timeout=10000")
+        con.execute(
+            "CREATE TABLE IF NOT EXISTS reports ("
+            "id TEXT PRIMARY KEY, created_utc TEXT NOT NULL, "
+            "test_name TEXT NOT NULL, payload TEXT NOT NULL)"
+        )
+        # Idempotently import the old last report without deleting it.
+        legacy = state / "last-report.json"
+        if legacy.is_file() and not legacy.is_symlink():
+            try:
+                doc = json.loads(legacy.read_text(encoding="utf-8"))
+                if (isinstance(doc, dict)
+                    and doc.get("schema") == "peginelab.wifcam-helper.report.v1"
+                    and isinstance(doc.get("result"), dict)):
+                    con.execute(
+                        "INSERT OR IGNORE INTO reports VALUES (?,?,?,?)",
+                        ("legacy-last-report", str(doc.get("created_utc", "")),
+                         str(doc["result"].get("test", "legacy")),
+                         json.dumps(doc, ensure_ascii=False)),
+                    )
+            except (json.JSONDecodeError, UnicodeError):
+                # Keep malformed original intact for manual inspection.
+                pass
+        con.commit()
+        yield con
+        con.commit()
     finally:
         con.close()
 
