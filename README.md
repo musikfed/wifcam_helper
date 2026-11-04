@@ -24,6 +24,14 @@ uv run --no-project python3 -m wifcam_helper web
 - `profiles/t23n_lean.json`: **allowlisted, conservative build profile**, staged for YadroKreator (does not modify the kernel).
 - `tests/`: hardware-free CI exercises for security, UTF-8 locale completeness and recommendation schema.
 
+## Real object counting on Acer Swift 3 (optional) / Реальный подсчёт объектов
+
+**RU:** В веб-интерфейсе «Видео» появилась отдельная команда «Посчитать объекты на реальных кадрах». Она считывает 1–5 настоящих RTSP-кадров, запускает локальные веса YOLO nano на CPU Acer и возвращает `visible_counts`, классы и рамки. Это **не заглушка**, но и не бесконечный трекинг: по кадрам нет суммирования уникальных предметов. Вторая кнопка, только с отдельным согласием, отправляет последний кадр через VPN/SSH-туннель на уже работающую Ollama `qwen2.5vl:7b` на Huananzhi CORE и возвращает её ответ. Веса YOLO нужно самостоятельно получить из доверенного источника; Helper их не скачивает. Кадры на диск не сохраняются, камера не перепрошивается.
+
+**EN:** A new Video panel runs bounded real RTSP frame counting using an operator-provided trusted YOLO nano model **on Acer CPU**, with per-frame object labels and boxes. An additional explicitly consented action sends just the final frame to a private CORE Ollama vision model, with `keep_alive=0` requested. Neither count totals nor vision interpretations imply unique tracking or proven accuracy. No photo archive or background GPU service.
+
+Instructions / Инструкции: [Acer + CORE RU](docs/ACER_CORE_VISION_RU.md) · [EN](docs/ACER_CORE_VISION_EN.md).
+
 ## Comparison, real latency and optional AI
 ```sh
 # Compare up to two existing RTSP streams across TCP and UDP:
