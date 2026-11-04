@@ -59,7 +59,9 @@
     "visionTest": "Проверить классификатор YOLO",
     "visionModel": "Путь к локальной модели YOLO (.pt/.onnx)",
     "visionDevice": "Вычислитель классификации",
-    "visionConsent": "Разрешаю обработать один кадр локально на CORE без сохранения"
+    "visionConsent": "Разрешаю обработать один кадр локально на CORE без сохранения",
+    "helperHistoryTitle": "История диагностических проверок Helper",
+    "helperHistoryRefresh": "↻ Обновить историю"
   },
   "en": {
     "brand": "PegineLab · WifCam Helper",
@@ -121,7 +123,9 @@
     "visionTest": "Test YOLO classifier",
     "visionModel": "Local YOLO model path (.pt/.onnx)",
     "visionDevice": "Classification device",
-    "visionConsent": "I consent to processing one frame locally on CORE without saving it"
+    "visionConsent": "I consent to processing one frame locally on CORE without saving it",
+    "helperHistoryTitle": "Helper diagnostic test history",
+    "helperHistoryRefresh": "↻ Refresh history"
   },
   "be": {
     "brand": "PegineLab · WifCam Helper",
@@ -183,7 +187,9 @@
     "visionTest": "Праверыць класіфікатар YOLO",
     "visionModel": "Шлях да лакальнай мадэлі (.pt/.onnx)",
     "visionDevice": "Прылада класіфікацыі",
-    "visionConsent": "Дазваляю апрацаваць адзін кадр лакальна без захавання"
+    "visionConsent": "Дазваляю апрацаваць адзін кадр лакальна без захавання",
+    "helperHistoryTitle": "Гісторыя праверак Helper",
+    "helperHistoryRefresh": "↻ Абнавіць гісторыю"
   },
   "sah": {
     "brand": "PegineLab · WifCam Helper",
@@ -245,7 +251,9 @@
     "visionTest": "YOLO классификаторы тургут",
     "visionModel": "Локальнай модель суола (.pt/.onnx)",
     "visionDevice": "Классификация устройството",
-    "visionConsent": "Биир кадры локальнай тургутууга сөбүлэһэбин, суруллубат"
+    "visionConsent": "Биир кадры локальнай тургутууга сөбүлэһэбин, суруллубат",
+    "helperHistoryTitle": "Helper бэрэбиэркэлэрин историята",
+    "helperHistoryRefresh": "↻ Историяны саҥарт"
   },
   "de": {
     "brand": "PegineLab · WifCam Helper",
@@ -307,7 +315,9 @@
     "visionTest": "YOLO-Klassifikator testen",
     "visionModel": "Lokaler YOLO-Modellpfad (.pt/.onnx)",
     "visionDevice": "Klassifikationsgerät",
-    "visionConsent": "Ich erlaube die lokale Analyse eines Einzelbildes ohne Speicherung"
+    "visionConsent": "Ich erlaube die lokale Analyse eines Einzelbildes ohne Speicherung",
+    "helperHistoryTitle": "Helper-Diagnoseverlauf",
+    "helperHistoryRefresh": "↻ Verlauf aktualisieren"
   },
   "fr": {
     "brand": "PegineLab · WifCam Helper",
@@ -369,7 +379,9 @@
     "visionTest": "Tester le classificateur YOLO",
     "visionModel": "Chemin du modèle YOLO local (.pt/.onnx)",
     "visionDevice": "Appareil de classification",
-    "visionConsent": "J'autorise l'analyse locale d'une image, sans conservation"
+    "visionConsent": "J'autorise l'analyse locale d'une image, sans conservation",
+    "helperHistoryTitle": "Historique des tests Helper",
+    "helperHistoryRefresh": "↻ Actualiser l'historique"
   },
   "zh-CN": {
     "brand": "PegineLab · WifCam Helper",
@@ -431,6 +443,8 @@
     "visionTest": "测试 YOLO 目标分类",
     "visionModel": "本地 YOLO 模型路径 (.pt/.onnx)",
     "visionDevice": "分类计算设备",
-    "visionConsent": "我同意在 CORE 本地处理一帧图像，不保存图片"
+    "visionConsent": "我同意在 CORE 本地处理一帧图像，不保存图片",
+    "helperHistoryTitle": "Helper 诊断测试历史",
+    "helperHistoryRefresh": "↻ 刷新历史"
   }
 }

@@ -50,6 +50,25 @@ bash scripts/check-factory-integration.sh
 ```
 This is read-only; it does not compile, install firmware or publish a candidate.
 
+## Independent Helper service & SQLite history / Отдельная служба и БД
+
+**RU:** Helper — отдельный проект, не вкладка сборки ядра. Его диагностика сохраняется в своей SQLite `~/.local/state/wifcam-helper/history.sqlite3`, включая однократный импорт старого `last-report.json`. База фабрики `factory-state/factory.sqlite3` **не используется**. В «Отчётах» доступна история последних 20 запусков, на `/api/history-summary` — общее количество. Порт Helper — только `127.0.0.1:8765`.
+
+После обновления собственного Git checkout на Ubuntu CORE можно зарегистрировать **только его** пользовательскую службу:
+
+```bash
+cd /1tbdisk/PegineLab/projects/wifcam_helper
+bash scripts/install-user-service.sh --start
+bash scripts/helper-service.sh status
+# Только Helper:
+bash scripts/helper-service.sh restart
+bash scripts/helper-service.sh stop
+```
+
+С Acer Windows доступ через SSH-туннель `ssh -N -L 8765:127.0.0.1:8765 user@192.168.0.100` и браузер `http://127.0.0.1:8765`. Не публикуй порт наружу. Никаких контейнеров, ключей Wi-Fi, GPU, прошивок или сервисов ACHEWIW установка не трогает. YadroKreator показывает **только состояние** этого сервиса и отдельной базы.
+
+**EN:** All diagnostic reports now persist in a private Helper-only SQLite DB and remain separate from factory build history. Existing legacy last-report JSON is preserved. A dedicated loopback-only user systemd unit can be installed explicitly; its lifecycle is independent of the firmware builder and all other containers.
+
 ## Camera tools
 The pinned Thingino Raptor includes `rad` (mic/audio), `rac` (speaker playback), and `microphone`, `speaker`, `play` wrappers; WIFICAM build requires them in SD rootfs. On the real camera you must verify physical audio, audio input routing/amp GPIO, mic acoustics, and amplifier, then measure the actual latency.
 
