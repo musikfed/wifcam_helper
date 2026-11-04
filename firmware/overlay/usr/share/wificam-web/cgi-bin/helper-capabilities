@@ -1,0 +1,6 @@
+#!/bin/sh
+# Protected by the same WIFICAM BusyBox CGI server configuration as all camera endpoints.
+set -eu
+printf 'Content-Type: application/json\r\n'
+printf 'Cache-Control: no-store\r\n\r\n'
+exec /usr/bin/wifcam-helper-probe
