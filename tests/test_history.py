@@ -31,6 +31,22 @@ class HelperHistoryTests(unittest.TestCase):
             self.assertEqual((state/"history.sqlite3").stat().st_mode & 0o777,0o600)
             self.assertEqual(state.stat().st_mode & 0o777,0o700)
 
+    def test_reject_symlinked_state_without_touching_target(self):
+        with tempfile.TemporaryDirectory() as tmp:
+            base=Path(tmp)
+            actual=base/"unrelated-data"
+            actual.mkdir(mode=0o750)
+            sentinel=actual/"sentinel.txt"
+            sentinel.write_text("keep")
+            link=base/"helper"
+            link.symlink_to(actual, target_is_directory=True)
+            before=actual.stat().st_mode & 0o777
+            with self.assertRaises(ValueError):
+                history.summary(link)
+            self.assertEqual(actual.stat().st_mode & 0o777,before)
+            self.assertEqual(sentinel.read_text(),"keep")
+            self.assertFalse((actual/"history.sqlite3").exists())
+
     def test_idempotent_import_and_read_only_summary(self):
         with tempfile.TemporaryDirectory() as tmp:
             state=Path(tmp)/"helper"
