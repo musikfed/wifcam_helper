@@ -70,6 +70,19 @@ pre{background:#0e1729;color:#d1fae5;padding:17px;border-radius:13px;white-space
 <div><label for="visionDevice" data-i18n="visionDevice"></label><select id="visionDevice"><option value="cpu">CPU</option><option value="cuda:0">RTX CUDA:0</option></select></div></div>
 <div class="consent"><input id="visionConsent" type="checkbox"><label for="visionConsent" data-i18n="visionConsent"></label></div>
 <div class="test-row"><button class="primary" data-kind="classification" data-i18n="visionTest"></button></div>
+<div class="card" style="margin-top:16px">
+<h2 data-i18n="visionObserve"></h2><p class="muted" data-i18n="visionHelp"></p>
+<div class="formgrid">
+<div><label for="visionSamples" data-i18n="visionSamples"></label><select id="visionSamples"><option value="1">1</option><option value="3" selected>3</option><option value="5">5</option></select></div>
+<div><label for="ollamaEndpoint" data-i18n="ollamaEndpoint"></label><input id="ollamaEndpoint" placeholder="http://127.0.0.1:11434" autocomplete="off"></div>
+<div><label for="ollamaModel" data-i18n="ollamaModel"></label><input id="ollamaModel" value="qwen2.5vl:7b" autocomplete="off"></div>
+<div><label for="visionQuestion" data-i18n="visionQuestion"></label><input id="visionQuestion" value="Что находится перед камерой?" autocomplete="off"></div>
+</div>
+<div class="consent"><input id="ollamaConsent" type="checkbox"><label for="ollamaConsent" data-i18n="remoteConsent"></label></div>
+<div class="test-row">
+<button class="primary" data-kind="observe" data-i18n="visionObserve"></button>
+<button class="primary" data-kind="observe-ollama" data-i18n="visionOllama"></button>
+</div></div>
 <div class="statusline" data-i18n="videoNote"></div></div></section>
 <section class="panel" id="audio"><div class="card"><h2 data-i18n="audio"></h2>
 <p class="muted" data-i18n="audioNote"></p>
@@ -115,13 +128,20 @@ async function loadReport(){
 }
 async function run(kind){
   if(busy)return;
-  const payload={kind,host:el('host').value.trim(),user:el('user').value.trim(),
+  const remote=kind==='observe-ollama';
+  const payload={kind:remote?'observe':kind,host:el('host').value.trim(),user:el('user').value.trim(),
     key:el('key').value.trim(),url:el('url').value.trim(),alt_url:el('altUrl').value.trim(),transport:el('transport').value,
     mic_consent:el('micConsent').checked,speaker_consent:el('speakerConsent').checked,
-    model:el('modelPath').value.trim(),device:el('visionDevice').value,vision_consent:el('visionConsent').checked};
+    model:el('modelPath').value.trim(),device:kind==='observe'||remote?'cpu':el('visionDevice').value,vision_consent:el('visionConsent').checked,
+    samples:Number(el('visionSamples').value),
+    ollama_endpoint:remote?el('ollamaEndpoint').value.trim():'',
+    ollama_model:remote?el('ollamaModel').value.trim():'',
+    question:remote?el('visionQuestion').value.trim():'',
+    ollama_consent:remote&&el('ollamaConsent').checked};
   if(kind==='microphone'&&!payload.mic_consent){alert(dict[lang].micConsent);return}
   if(kind==='speaker'&&!payload.speaker_consent){alert(dict[lang].speakerConsent);return}
-  if(kind==='classification'&&!payload.vision_consent){alert(dict[lang].visionConsent);return}
+  if((kind==='classification'||kind==='observe'||remote)&&!payload.vision_consent){alert(dict[lang].visionConsent);return}
+  if(remote&&!payload.ollama_consent){alert(dict[lang].remoteConsent);return}
   busy=true;all('button[data-kind]').forEach(b=>b.disabled=true);
   el('report').textContent=dict[lang].running;
   try{
