@@ -93,7 +93,8 @@ pre{background:#0e1729;color:#d1fae5;padding:17px;border-radius:13px;white-space
 <p class="muted" data-i18n="privacy"></p></div></section>
 <section class="panel" id="profiles"><div class="card"><h2 data-i18n="profiles"></h2><p data-i18n="presetNote"></p>
 <a class="secondary" href="/api/preset" download="wifcam-approved-candidate.json" data-i18n="preset"></a><p class="muted" data-i18n="protected"></p></div></section>
-<section class="panel" id="reports"><div class="card"><h2 data-i18n="report"></h2><pre id="report"></pre>
+<section class="panel" id="reports"><div class="card"><h2 data-i18n="report"></h2>
+<div id="sceneResult" class="cards" role="status" aria-live="polite"></div><pre id="report"></pre>
 <div class="test-row"><a id="helpLink" class="secondary" href="https://github.com/musikfed/wifcam_helper/tree/main/wiki" target="_blank" rel="noopener noreferrer" data-i18n="help"></a></div></div></section>
 <div class="footerline">© PegineLab · WifCam Helper · localhost only · no automatic camera configuration changes</div></main></div>
 <script>
@@ -114,6 +115,9 @@ function translate(){
   all('[data-i18n]').forEach(node=>{let text=dict[lang]&&dict[lang][node.dataset.i18n];if(text)node.textContent=text});
   const active=all('nav button.active')[0];el('pageTitle').textContent=(dict[lang]||{})[active.dataset.tab]||'WifCam Helper';
   el('helpLink').href='https://github.com/musikfed/wifcam_helper/blob/main/wiki/Guide-'+(lang==='zh-CN'?'ZH-CN':lang.toUpperCase())+'.md';
+  // Refresh translated visual findings without changing stored report.
+  const raw=el('report').textContent;
+  try{sceneCards(JSON.parse(raw).result)}catch(_){};
 }
 all('nav button').forEach(b=>b.onclick=()=>{
   all('nav button').forEach(x=>x.classList.toggle('active',x===b));
@@ -121,9 +125,27 @@ all('nav button').forEach(b=>b.onclick=()=>{
   translate();
 });
 el('locale').onchange=()=>{lang=el('locale').value;try{localStorage.setItem('wifcam.helper.lang',lang)}catch(_){}translate()};
+function sceneCards(report){
+  const root=el('sceneResult');root.replaceChildren();
+  if(!report||report.test!=='observe')return;
+  const add=(title,body)=>{
+    const card=document.createElement('div');card.className='card';
+    const heading=document.createElement('h2');heading.textContent=title;
+    const paragraph=document.createElement('p');paragraph.textContent=body;
+    card.append(heading,paragraph);root.append(card);
+  };
+  const d=dict[lang]||dict.ru||{};
+  const display=counts=>Object.keys(counts||{}).length
+    ?Object.entries(counts).map(([name,n])=>name+': '+n).join(' · ')
+    :(d.noObjects||'No objects detected');
+  add(d.visibleNow||'Currently visible',display(report.current_visible));
+  add(d.visiblePeak||'Peak per frame',display(report.peak_visible));
+  if(report.ollama&&report.ollama.answer)add(d.ollamaAnswer||'Ollama answer',report.ollama.answer);
+}
 async function loadReport(){
   try{const r=await (await fetch('/api/last',{cache:'no-store'})).json();
     el('report').textContent=Object.keys(r).length?JSON.stringify(r,null,2):dict[lang].noData;
+    sceneCards(r.result);
   }catch(_){el('report').textContent=dict[lang].noData}
 }
 async function run(kind){
@@ -149,7 +171,8 @@ async function run(kind){
     const result=await response.json();
     if(!response.ok)throw Error(result.error||'Test failed');
     el('report').textContent=JSON.stringify(result,null,2);
-  }catch(e){el('report').textContent=dict[lang].failed+': '+String(e.message)}
+    sceneCards(result.result);
+  }catch(e){sceneCards(null);el('report').textContent=dict[lang].failed+': '+String(e.message)}
   finally{busy=false;all('button[data-kind]').forEach(b=>b.disabled=false);all('nav button').forEach(x=>x.classList.toggle('active',x.dataset.tab==='reports'));all('section.panel').forEach(x=>x.classList.toggle('active',x.id==='reports'));translate()}
 }
 all('button[data-kind]').forEach(b=>b.onclick=()=>run(b.dataset.kind));
