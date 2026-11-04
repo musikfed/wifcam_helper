@@ -16,7 +16,12 @@ from uuid import uuid4
 
 @contextmanager
 def _connect(state: Path):
+    state = Path(state)
+    if state.is_symlink():
+        raise ValueError("Symlinked Helper state directory refused")
     state.mkdir(mode=0o700, parents=True, exist_ok=True)
+    if not state.is_dir() or state.is_symlink():
+        raise ValueError("Helper state must be a real directory")
     os.chmod(state, 0o700)
     db_path = state / "history.sqlite3"
     if db_path.is_symlink():
