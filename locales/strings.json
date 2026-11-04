@@ -59,7 +59,15 @@
     "visionTest": "Проверить классификатор YOLO",
     "visionModel": "Путь к локальной модели YOLO (.pt/.onnx)",
     "visionDevice": "Вычислитель классификации",
-    "visionConsent": "Разрешаю обработать один кадр локально на CORE без сохранения"
+    "visionConsent": "Разрешаю обработать выбранные кадры с моей камеры локально без сохранения",
+    "visionObserve": "Посчитать объекты на реальных кадрах",
+    "visionHelp": "Кадры из камеры анализируются локальным YOLO на CPU. Счёт по каждому кадру, не сумма за всё время; кадры не сохраняются.",
+    "visionSamples": "Количество кадров (1–5)",
+    "ollamaEndpoint": "Локальный адрес Ollama на CORE через VPN/SSH-туннель",
+    "ollamaModel": "Установленная модель Ollama с поддержкой изображений",
+    "visionQuestion": "Вопрос к изображению",
+    "visionOllama": "Распознать и спросить Ollama",
+    "remoteConsent": "Разрешаю отправить последний кадр на свой CORE по частной сети (без сохранения)"
   },
   "en": {
     "brand": "PegineLab · WifCam Helper",
@@ -121,7 +129,15 @@
     "visionTest": "Test YOLO classifier",
     "visionModel": "Local YOLO model path (.pt/.onnx)",
     "visionDevice": "Classification device",
-    "visionConsent": "I consent to processing one frame locally on CORE without saving it"
+    "visionConsent": "I consent to processing selected camera frames locally without saving images",
+    "visionObserve": "Count objects in actual frames",
+    "visionHelp": "CPU YOLO analyzes real RTSP frames. Counts apply per frame, not across time; no images are saved.",
+    "visionSamples": "Samples (1–5)",
+    "ollamaEndpoint": "Private CORE Ollama URL over VPN/SSH tunnel",
+    "ollamaModel": "Installed Ollama vision model",
+    "visionQuestion": "Question about the scene",
+    "visionOllama": "Count and ask Ollama",
+    "remoteConsent": "I permit sending the final frame to my private CORE server without saving it"
   },
   "be": {
     "brand": "PegineLab · WifCam Helper",
@@ -183,7 +199,15 @@
     "visionTest": "Праверыць класіфікатар YOLO",
     "visionModel": "Шлях да лакальнай мадэлі (.pt/.onnx)",
     "visionDevice": "Прылада класіфікацыі",
-    "visionConsent": "Дазваляю апрацаваць адзін кадр лакальна без захавання"
+    "visionConsent": "Дазваляю апрацаваць адзін кадр лакальна без захавання",
+    "visionObserve": "Падлічыць аб'екты на рэальных кадрах",
+    "visionHelp": "YOLO аналізуе рэальныя кадры RTSP на CPU. Падлік для кожнага кадра; выявы не захоўваюцца.",
+    "visionSamples": "Колькасць кадраў (1–5)",
+    "ollamaEndpoint": "Прыватны URL Ollama на CORE праз VPN/SSH",
+    "ollamaModel": "Усталяваная мадэль Ollama для зроку",
+    "visionQuestion": "Пытанне пра выяву",
+    "visionOllama": "Падлічыць і спытаць Ollama",
+    "remoteConsent": "Дазваляю перадаць апошні кадр на мой сервер CORE без захавання"
   },
   "sah": {
     "brand": "PegineLab · WifCam Helper",
@@ -245,7 +269,15 @@
     "visionTest": "YOLO классификаторы тургут",
     "visionModel": "Локальнай модель суола (.pt/.onnx)",
     "visionDevice": "Классификация устройството",
-    "visionConsent": "Биир кадры локальнай тургутууга сөбүлэһэбин, суруллубат"
+    "visionConsent": "Биир кадры локальнай тургутууга сөбүлэһэбин, суруллубат",
+    "visionObserve": "Чын объектары ааҕыы",
+    "visionHelp": "YOLO RTSP дьиҥ кадрдарын CPU-га көрөр. Кадр аайы ааҕар, ойуулар хаалларыллыбаттар.",
+    "visionSamples": "Кадр ахсаана (1–5)",
+    "ollamaEndpoint": "CORE Ollama тус VPN/SSH аадырыһа",
+    "ollamaModel": "Ollama суруксут көрөр модели",
+    "visionQuestion": "Ойуу туһунан ыйытыы",
+    "visionOllama": "Ааҕыы уонна Ollama-тан ыйытыы",
+    "remoteConsent": "Тиһэх кадры тус CORE сервергэ ыытарга көнөбүн; хаалларыллыбат"
   },
   "de": {
     "brand": "PegineLab · WifCam Helper",
@@ -307,7 +339,15 @@
     "visionTest": "YOLO-Klassifikator testen",
     "visionModel": "Lokaler YOLO-Modellpfad (.pt/.onnx)",
     "visionDevice": "Klassifikationsgerät",
-    "visionConsent": "Ich erlaube die lokale Analyse eines Einzelbildes ohne Speicherung"
+    "visionConsent": "Ich erlaube die lokale Analyse eines Einzelbildes ohne Speicherung",
+    "visionObserve": "Objekte auf echten Bildern zählen",
+    "visionHelp": "CPU-YOLO analysiert echte RTSP-Bilder. Zählung je Bild, nicht über die Zeit; keine Speicherung.",
+    "visionSamples": "Anzahl der Bilder (1–5)",
+    "ollamaEndpoint": "Private CORE-Ollama-URL via VPN/SSH-Tunnel",
+    "ollamaModel": "Installiertes Ollama-Bildmodell",
+    "visionQuestion": "Frage zum Bild",
+    "visionOllama": "Zählen und Ollama fragen",
+    "remoteConsent": "Ich erlaube, das letzte Bild an meinen privaten CORE zu senden, ohne es zu speichern"
   },
   "fr": {
     "brand": "PegineLab · WifCam Helper",
@@ -369,7 +409,15 @@
     "visionTest": "Tester le classificateur YOLO",
     "visionModel": "Chemin du modèle YOLO local (.pt/.onnx)",
     "visionDevice": "Appareil de classification",
-    "visionConsent": "J'autorise l'analyse locale d'une image, sans conservation"
+    "visionConsent": "J'autorise l'analyse locale d'une image, sans conservation",
+    "visionObserve": "Compter les objets sur les images réelles",
+    "visionHelp": "YOLO analyse des images RTSP sur CPU. Comptage par image, sans cumul; aucune image enregistrée.",
+    "visionSamples": "Nombre d'images (1–5)",
+    "ollamaEndpoint": "URL privée d'Ollama CORE via VPN/tunnel SSH",
+    "ollamaModel": "Modèle Ollama visuel installé",
+    "visionQuestion": "Question sur la scène",
+    "visionOllama": "Compter et interroger Ollama",
+    "remoteConsent": "J'autorise l'envoi de la dernière image à mon serveur CORE privé sans enregistrement"
   },
   "zh-CN": {
     "brand": "PegineLab · WifCam Helper",
@@ -431,6 +479,14 @@
     "visionTest": "测试 YOLO 目标分类",
     "visionModel": "本地 YOLO 模型路径 (.pt/.onnx)",
     "visionDevice": "分类计算设备",
-    "visionConsent": "我同意在 CORE 本地处理一帧图像，不保存图片"
+    "visionConsent": "我同意在 CORE 本地处理一帧图像，不保存图片",
+    "visionObserve": "统计真实画面中的物体",
+    "visionHelp": "CPU 上的 YOLO 分析真实 RTSP 画面。每帧单独计数，不累计；不保存图像。",
+    "visionSamples": "帧数（1–5）",
+    "ollamaEndpoint": "通过 VPN/SSH 隧道访问私有 CORE Ollama 地址",
+    "ollamaModel": "已安装的 Ollama 视觉模型",
+    "visionQuestion": "关于画面的问题",
+    "visionOllama": "计数并询问 Ollama",
+    "remoteConsent": "我同意把最后一帧发送到自己的私有 CORE 服务器，不保存图像"
   }
 }
