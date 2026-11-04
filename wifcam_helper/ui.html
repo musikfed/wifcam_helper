@@ -70,6 +70,19 @@ pre{background:#0e1729;color:#d1fae5;padding:17px;border-radius:13px;white-space
 <div><label for="visionDevice" data-i18n="visionDevice"></label><select id="visionDevice"><option value="cpu">CPU</option><option value="cuda:0">RTX CUDA:0</option></select></div></div>
 <div class="consent"><input id="visionConsent" type="checkbox"><label for="visionConsent" data-i18n="visionConsent"></label></div>
 <div class="test-row"><button class="primary" data-kind="classification" data-i18n="visionTest"></button></div>
+<div class="card" style="margin-top:16px">
+<h2 data-i18n="visionObserve"></h2><p class="muted" data-i18n="visionHelp"></p>
+<div class="formgrid">
+<div><label for="visionSamples" data-i18n="visionSamples"></label><select id="visionSamples"><option value="1">1</option><option value="3" selected>3</option><option value="5">5</option></select></div>
+<div><label for="ollamaEndpoint" data-i18n="ollamaEndpoint"></label><input id="ollamaEndpoint" placeholder="http://127.0.0.1:11434" autocomplete="off"></div>
+<div><label for="ollamaModel" data-i18n="ollamaModel"></label><input id="ollamaModel" value="qwen2.5vl:7b" autocomplete="off"></div>
+<div><label for="visionQuestion" data-i18n="visionQuestion"></label><input id="visionQuestion" value="Что находится перед камерой?" autocomplete="off"></div>
+</div>
+<div class="consent"><input id="ollamaConsent" type="checkbox"><label for="ollamaConsent" data-i18n="remoteConsent"></label></div>
+<div class="test-row">
+<button class="primary" data-kind="observe" data-i18n="visionObserve"></button>
+<button class="primary" data-kind="observe-ollama" data-i18n="visionOllama"></button>
+</div></div>
 <div class="statusline" data-i18n="videoNote"></div></div></section>
 <section class="panel" id="audio"><div class="card"><h2 data-i18n="audio"></h2>
 <p class="muted" data-i18n="audioNote"></p>
@@ -80,7 +93,8 @@ pre{background:#0e1729;color:#d1fae5;padding:17px;border-radius:13px;white-space
 <p class="muted" data-i18n="privacy"></p></div></section>
 <section class="panel" id="profiles"><div class="card"><h2 data-i18n="profiles"></h2><p data-i18n="presetNote"></p>
 <a class="secondary" href="/api/preset" download="wifcam-approved-candidate.json" data-i18n="preset"></a><p class="muted" data-i18n="protected"></p></div></section>
-<section class="panel" id="reports"><div class="card"><h2 data-i18n="report"></h2><pre id="report"></pre>
+<section class="panel" id="reports"><div class="card"><h2 data-i18n="report"></h2>
+<div id="sceneResult" class="cards" role="status" aria-live="polite"></div><pre id="report"></pre>
 <div class="test-row"><a id="helpLink" class="secondary" href="https://github.com/musikfed/wifcam_helper/tree/main/wiki" target="_blank" rel="noopener noreferrer" data-i18n="help"></a></div></div></section>
 <div class="footerline">© PegineLab · WifCam Helper · localhost only · no automatic camera configuration changes</div></main></div>
 <script>
@@ -101,6 +115,9 @@ function translate(){
   all('[data-i18n]').forEach(node=>{let text=dict[lang]&&dict[lang][node.dataset.i18n];if(text)node.textContent=text});
   const active=all('nav button.active')[0];el('pageTitle').textContent=(dict[lang]||{})[active.dataset.tab]||'WifCam Helper';
   el('helpLink').href='https://github.com/musikfed/wifcam_helper/blob/main/wiki/Guide-'+(lang==='zh-CN'?'ZH-CN':lang.toUpperCase())+'.md';
+  // Refresh translated visual findings without changing stored report.
+  const raw=el('report').textContent;
+  try{sceneCards(JSON.parse(raw).result)}catch(_){};
 }
 all('nav button').forEach(b=>b.onclick=()=>{
   all('nav button').forEach(x=>x.classList.toggle('active',x===b));
@@ -108,20 +125,45 @@ all('nav button').forEach(b=>b.onclick=()=>{
   translate();
 });
 el('locale').onchange=()=>{lang=el('locale').value;try{localStorage.setItem('wifcam.helper.lang',lang)}catch(_){}translate()};
+function sceneCards(report){
+  const root=el('sceneResult');root.replaceChildren();
+  if(!report||report.test!=='observe')return;
+  const add=(title,body)=>{
+    const card=document.createElement('div');card.className='card';
+    const heading=document.createElement('h2');heading.textContent=title;
+    const paragraph=document.createElement('p');paragraph.textContent=body;
+    card.append(heading,paragraph);root.append(card);
+  };
+  const d=dict[lang]||dict.ru||{};
+  const display=counts=>Object.keys(counts||{}).length
+    ?Object.entries(counts).map(([name,n])=>name+': '+n).join(' · ')
+    :(d.noObjects||'No objects detected');
+  add(d.visibleNow||'Currently visible',display(report.current_visible));
+  add(d.visiblePeak||'Peak per frame',display(report.peak_visible));
+  if(report.ollama&&report.ollama.answer)add(d.ollamaAnswer||'Ollama answer',report.ollama.answer);
+}
 async function loadReport(){
   try{const r=await (await fetch('/api/last',{cache:'no-store'})).json();
     el('report').textContent=Object.keys(r).length?JSON.stringify(r,null,2):dict[lang].noData;
+    sceneCards(r.result);
   }catch(_){el('report').textContent=dict[lang].noData}
 }
 async function run(kind){
   if(busy)return;
-  const payload={kind,host:el('host').value.trim(),user:el('user').value.trim(),
+  const remote=kind==='observe-ollama';
+  const payload={kind:remote?'observe':kind,host:el('host').value.trim(),user:el('user').value.trim(),
     key:el('key').value.trim(),url:el('url').value.trim(),alt_url:el('altUrl').value.trim(),transport:el('transport').value,
     mic_consent:el('micConsent').checked,speaker_consent:el('speakerConsent').checked,
-    model:el('modelPath').value.trim(),device:el('visionDevice').value,vision_consent:el('visionConsent').checked};
+    model:el('modelPath').value.trim(),device:kind==='observe'||remote?'cpu':el('visionDevice').value,vision_consent:el('visionConsent').checked,
+    samples:Number(el('visionSamples').value),
+    ollama_endpoint:remote?el('ollamaEndpoint').value.trim():'',
+    ollama_model:remote?el('ollamaModel').value.trim():'',
+    question:remote?el('visionQuestion').value.trim():'',
+    ollama_consent:remote&&el('ollamaConsent').checked};
   if(kind==='microphone'&&!payload.mic_consent){alert(dict[lang].micConsent);return}
   if(kind==='speaker'&&!payload.speaker_consent){alert(dict[lang].speakerConsent);return}
-  if(kind==='classification'&&!payload.vision_consent){alert(dict[lang].visionConsent);return}
+  if((kind==='classification'||kind==='observe'||remote)&&!payload.vision_consent){alert(dict[lang].visionConsent);return}
+  if(remote&&!payload.ollama_consent){alert(dict[lang].remoteConsent);return}
   busy=true;all('button[data-kind]').forEach(b=>b.disabled=true);
   el('report').textContent=dict[lang].running;
   try{
@@ -129,7 +171,8 @@ async function run(kind){
     const result=await response.json();
     if(!response.ok)throw Error(result.error||'Test failed');
     el('report').textContent=JSON.stringify(result,null,2);
-  }catch(e){el('report').textContent=dict[lang].failed+': '+String(e.message)}
+    sceneCards(result.result);
+  }catch(e){sceneCards(null);el('report').textContent=dict[lang].failed+': '+String(e.message)}
   finally{busy=false;all('button[data-kind]').forEach(b=>b.disabled=false);all('nav button').forEach(x=>x.classList.toggle('active',x.dataset.tab==='reports'));all('section.panel').forEach(x=>x.classList.toggle('active',x.id==='reports'));translate()}
 }
 all('button[data-kind]').forEach(b=>b.onclick=()=>run(b.dataset.kind));

@@ -250,7 +250,9 @@ def export_preset(path: Path) -> dict:
 def run_test(kind: str, *, host: str = "", user: str = "root", key: str = "",
              url: str = "", alt_url: str = "", transport: str = "tcp", mic_consent: bool = False,
              speaker_consent: bool = False, vision_consent: bool = False,
-             model: str = "", device: str = "cpu") -> dict:
+             model: str = "", device: str = "cpu", samples: int = 3,
+             ollama_endpoint: str = "", ollama_model: str = "",
+             question: str = "Что находится перед камерой?", ollama_consent: bool = False) -> dict:
     if kind == "inventory":
         return inventory(host=host, user=user, key=key or None)
     if kind == "probe":
@@ -267,13 +269,19 @@ def run_test(kind: str, *, host: str = "", user: str = "root", key: str = "",
     if kind == "classification":
         from .classifier import classify
         return classify(url, model_path=model, device=device, consent=vision_consent)
+    if kind == "observe":
+        from .vision import observe
+        return observe(url, model_path=model, device=device, consent=vision_consent,
+                       samples=samples, ollama_endpoint=ollama_endpoint,
+                       ollama_model=ollama_model, question=question,
+                       ollama_consent=ollama_consent)
     raise BenchError("Unsupported test")
 
 
 def main(argv: list[str] | None = None) -> int:
     parser = argparse.ArgumentParser(prog="wifcam-helper", description="Non-destructive T23N bench")
     parser.add_argument("command", choices=["inventory", "probe", "video", "compare", "microphone", "speaker", "classification",
-                                             "report", "export-preset", "quality-evaluate", "web"])
+                                             "observe", "report", "export-preset", "quality-evaluate", "web"])
     parser.add_argument("--host", default="")
     parser.add_argument("--user", default="root")
     parser.add_argument("--ssh-key", default="")
@@ -285,6 +293,11 @@ def main(argv: list[str] | None = None) -> int:
     parser.add_argument("--vision-consent", action="store_true")
     parser.add_argument("--model", default="")
     parser.add_argument("--device", choices=("cpu", "cuda:0"), default="cpu")
+    parser.add_argument("--samples", type=int, default=3)
+    parser.add_argument("--ollama-endpoint", default="")
+    parser.add_argument("--ollama-model", default="")
+    parser.add_argument("--question", default="Что находится перед камерой?")
+    parser.add_argument("--ollama-consent", action="store_true")
     parser.add_argument("--output", default="")
     parser.add_argument("--csv", default="")
     args = parser.parse_args(argv)
@@ -309,6 +322,9 @@ def main(argv: list[str] | None = None) -> int:
                 url=args.rtsp_url, alt_url=args.alt_rtsp_url, transport=args.transport,
                 mic_consent=args.mic_consent, speaker_consent=args.speaker_consent,
                 vision_consent=args.vision_consent, model=args.model, device=args.device,
+                samples=args.samples, ollama_endpoint=args.ollama_endpoint,
+                ollama_model=args.ollama_model, question=args.question,
+                ollama_consent=args.ollama_consent,
             ))
         print(json.dumps(result, indent=2, ensure_ascii=False))
         return 0

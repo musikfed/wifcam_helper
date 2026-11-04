@@ -87,7 +87,8 @@ class Handler(BaseHTTPRequestHandler):
             if not isinstance(data, dict):
                 raise ValueError("Object required")
             keys = ("kind", "host", "user", "key", "url", "alt_url", "transport",
-                    "mic_consent", "speaker_consent", "vision_consent", "model", "device")
+                    "mic_consent", "speaker_consent", "vision_consent", "model", "device",
+                    "samples", "ollama_endpoint", "ollama_model", "question", "ollama_consent")
             if set(data) - set(keys):
                 raise ValueError("Unsupported option")
             if not TEST_LOCK.acquire(blocking=False):
@@ -102,6 +103,11 @@ class Handler(BaseHTTPRequestHandler):
                     speaker_consent=data.get("speaker_consent") is True,
                     vision_consent=data.get("vision_consent") is True,
                     model=str(data.get("model", "")), device=str(data.get("device", "cpu")),
+                    samples=data.get("samples", 3),
+                    ollama_endpoint=str(data.get("ollama_endpoint", "")),
+                    ollama_model=str(data.get("ollama_model", "")),
+                    question=str(data.get("question", "Что находится перед камерой?")),
+                    ollama_consent=data.get("ollama_consent") is True,
                 )
                 doc = store(result)
             finally:
