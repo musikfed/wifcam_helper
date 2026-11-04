@@ -24,10 +24,10 @@ def _connect(state: Path):
     fd = os.open(db_path, os.O_RDWR | os.O_CREAT, 0o600)
     os.close(fd)
     os.chmod(db_path, 0o600)
-    # WAL files are created under our private directory with a private umask.
-    old_mask = os.umask(0o077)
+    # The parent directory is 0700. Do not mutate process-global umask
+    # in ThreadingHTTPServer while concurrent diagnostics are running.
+    con = sqlite3.connect(db_path, timeout=10)
     try:
-        con = sqlite3.connect(db_path, timeout=10)
         try:
             con.execute("PRAGMA journal_mode=WAL")
             con.execute("PRAGMA busy_timeout=10000")
@@ -56,10 +56,8 @@ def _connect(state: Path):
             con.commit()
             yield con
             con.commit()
-        finally:
-            con.close()
     finally:
-        os.umask(old_mask)
+        con.close()
 
 
 def append(state: Path, doc: dict) -> None:
