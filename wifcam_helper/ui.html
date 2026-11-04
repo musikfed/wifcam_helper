@@ -80,7 +80,7 @@ pre{background:#0e1729;color:#d1fae5;padding:17px;border-radius:13px;white-space
 <p class="muted" data-i18n="privacy"></p></div></section>
 <section class="panel" id="profiles"><div class="card"><h2 data-i18n="profiles"></h2><p data-i18n="presetNote"></p>
 <a class="secondary" href="/api/preset" download="wifcam-approved-candidate.json" data-i18n="preset"></a><p class="muted" data-i18n="protected"></p></div></section>
-<section class="panel" id="reports"><div class="card"><h2 data-i18n="report"></h2><pre id="report"></pre>
+<section class="panel" id="reports"><div class="card"><h2 data-i18n="report"></h2><pre id="report"></pre><div class="test-row"><button id="refreshHistory" class="primary" data-i18n="helperHistoryRefresh"></button></div><h3 data-i18n="helperHistoryTitle"></h3><pre id="historyList"></pre>
 <div class="test-row"><a id="helpLink" class="secondary" href="https://github.com/musikfed/wifcam_helper/tree/main/wiki" target="_blank" rel="noopener noreferrer" data-i18n="help"></a></div></div></section>
 <div class="footerline">© PegineLab · WifCam Helper · localhost only · no automatic camera configuration changes</div></main></div>
 <script>
@@ -94,7 +94,7 @@ async function init(){
   try{lang=localStorage.getItem('wifcam.helper.lang')||'ru'}catch(_){}
   if(!dict[lang])lang='ru';
   el('locale').value=lang;
-  translate();await loadReport();
+  translate();await loadReport();await loadHistory();
 }
 function translate(){
   document.documentElement.lang=lang;
@@ -108,6 +108,21 @@ all('nav button').forEach(b=>b.onclick=()=>{
   translate();
 });
 el('locale').onchange=()=>{lang=el('locale').value;try{localStorage.setItem('wifcam.helper.lang',lang)}catch(_){}translate()};
+async function loadHistory(){
+  try{
+    const [reports,summary]=await Promise.all([
+      fetch('/api/history',{cache:'no-store'}).then(r=>r.json()),
+      fetch('/api/history-summary',{cache:'no-store'}).then(r=>r.json()),
+    ]);
+    const data=(reports.reports||[]).slice(0,20).map(doc=>({
+      at:doc.created_utc,
+      test:doc.result&&doc.result.test,
+      result:doc.result,
+    }));
+    el('historyList').textContent=JSON.stringify({count:summary.total,recent:data},null,2);
+  }catch(_){el('historyList').textContent='История пока не доступна';}
+}
+el('refreshHistory').onclick=loadHistory;
 async function loadReport(){
   try{const r=await (await fetch('/api/last',{cache:'no-store'})).json();
     el('report').textContent=Object.keys(r).length?JSON.stringify(r,null,2):dict[lang].noData;
@@ -130,7 +145,7 @@ async function run(kind){
     if(!response.ok)throw Error(result.error||'Test failed');
     el('report').textContent=JSON.stringify(result,null,2);
   }catch(e){el('report').textContent=dict[lang].failed+': '+String(e.message)}
-  finally{busy=false;all('button[data-kind]').forEach(b=>b.disabled=false);all('nav button').forEach(x=>x.classList.toggle('active',x.dataset.tab==='reports'));all('section.panel').forEach(x=>x.classList.toggle('active',x.id==='reports'));translate()}
+  finally{busy=false;all('button[data-kind]').forEach(b=>b.disabled=false);all('nav button').forEach(x=>x.classList.toggle('active',x.dataset.tab==='reports'));all('section.panel').forEach(x=>x.classList.toggle('active',x.id==='reports'));translate();await loadHistory()}
 }
 all('button[data-kind]').forEach(b=>b.onclick=()=>run(b.dataset.kind));
 init().catch(e=>{el('report').textContent=String(e)});
