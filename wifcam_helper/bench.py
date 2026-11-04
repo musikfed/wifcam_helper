@@ -209,6 +209,10 @@ def store(report: dict) -> dict:
            "created_utc": dt.datetime.now(dt.timezone.utc).isoformat(),
            "result": report}
     p = state_file()
+    # Persist in Helper-only SQLite before updating the legacy last-report cache.
+    # Neither factory jobs nor camera firmware databases are touched.
+    from .history import append
+    append(STATE, doc)
     tmp = p.with_suffix(".tmp")
     with tmp.open("w", encoding="utf-8") as f:
         json.dump(doc, f, indent=2, ensure_ascii=False)
