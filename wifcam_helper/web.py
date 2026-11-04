@@ -60,6 +60,14 @@ class Handler(BaseHTTPRequestHandler):
             self.js(loc)
         elif self.path == "/api/last":
             self.js(read_last() or {})
+        elif self.path == "/api/history":
+            from .bench import STATE
+            from .history import recent
+            self.js({"reports": recent(STATE)})
+        elif self.path == "/api/history-summary":
+            from .bench import STATE
+            from .history import summary
+            self.js(summary(STATE))
         elif self.path == "/api/preset":
             self.js(conservative_preset(), attachment="wifcam-approved-candidate.json")
         else:
