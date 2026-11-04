@@ -67,7 +67,11 @@
     "ollamaModel": "Установленная модель Ollama с поддержкой изображений",
     "visionQuestion": "Вопрос к изображению",
     "visionOllama": "Распознать и спросить Ollama",
-    "remoteConsent": "Разрешаю отправить последний кадр на свой CORE по частной сети (без сохранения)"
+    "remoteConsent": "Разрешаю отправить последний кадр на свой CORE по частной сети (без сохранения)",
+    "visibleNow": "Сейчас в кадре",
+    "visiblePeak": "Максимум за кадр",
+    "ollamaAnswer": "Ответ Ollama",
+    "noObjects": "Объекты не распознаны"
   },
   "en": {
     "brand": "PegineLab · WifCam Helper",
@@ -137,7 +141,11 @@
     "ollamaModel": "Installed Ollama vision model",
     "visionQuestion": "Question about the scene",
     "visionOllama": "Count and ask Ollama",
-    "remoteConsent": "I permit sending the final frame to my private CORE server without saving it"
+    "remoteConsent": "I permit sending the final frame to my private CORE server without saving it",
+    "visibleNow": "Visible in latest frame",
+    "visiblePeak": "Highest count per frame",
+    "ollamaAnswer": "Ollama answer",
+    "noObjects": "No objects detected"
   },
   "be": {
     "brand": "PegineLab · WifCam Helper",
@@ -207,7 +215,11 @@
     "ollamaModel": "Усталяваная мадэль Ollama для зроку",
     "visionQuestion": "Пытанне пра выяву",
     "visionOllama": "Падлічыць і спытаць Ollama",
-    "remoteConsent": "Дазваляю перадаць апошні кадр на мой сервер CORE без захавання"
+    "remoteConsent": "Дазваляю перадаць апошні кадр на мой сервер CORE без захавання",
+    "visibleNow": "Цяпер у кадры",
+    "visiblePeak": "Максімум за кадр",
+    "ollamaAnswer": "Адказ Ollama",
+    "noObjects": "Аб'екты не выяўлены"
   },
   "sah": {
     "brand": "PegineLab · WifCam Helper",
@@ -277,7 +289,11 @@
     "ollamaModel": "Ollama суруксут көрөр модели",
     "visionQuestion": "Ойуу туһунан ыйытыы",
     "visionOllama": "Ааҕыы уонна Ollama-тан ыйытыы",
-    "remoteConsent": "Тиһэх кадры тус CORE сервергэ ыытарга көнөбүн; хаалларыллыбат"
+    "remoteConsent": "Тиһэх кадры тус CORE сервергэ ыытарга көнөбүн; хаалларыллыбат",
+    "visibleNow": "Билиҥҥи кадрга",
+    "visiblePeak": "Кадр аайы улахан ахсаан",
+    "ollamaAnswer": "Ollama эппиэтэ",
+    "noObjects": "Объект көстүбэт"
   },
   "de": {
     "brand": "PegineLab · WifCam Helper",
@@ -347,7 +363,11 @@
     "ollamaModel": "Installiertes Ollama-Bildmodell",
     "visionQuestion": "Frage zum Bild",
     "visionOllama": "Zählen und Ollama fragen",
-    "remoteConsent": "Ich erlaube, das letzte Bild an meinen privaten CORE zu senden, ohne es zu speichern"
+    "remoteConsent": "Ich erlaube, das letzte Bild an meinen privaten CORE zu senden, ohne es zu speichern",
+    "visibleNow": "Im letzten Bild sichtbar",
+    "visiblePeak": "Höchste Zahl je Bild",
+    "ollamaAnswer": "Antwort von Ollama",
+    "noObjects": "Keine Objekte erkannt"
   },
   "fr": {
     "brand": "PegineLab · WifCam Helper",
@@ -417,7 +437,11 @@
     "ollamaModel": "Modèle Ollama visuel installé",
     "visionQuestion": "Question sur la scène",
     "visionOllama": "Compter et interroger Ollama",
-    "remoteConsent": "J'autorise l'envoi de la dernière image à mon serveur CORE privé sans enregistrement"
+    "remoteConsent": "J'autorise l'envoi de la dernière image à mon serveur CORE privé sans enregistrement",
+    "visibleNow": "Visibles sur la dernière image",
+    "visiblePeak": "Maximum par image",
+    "ollamaAnswer": "Réponse Ollama",
+    "noObjects": "Aucun objet détecté"
   },
   "zh-CN": {
     "brand": "PegineLab · WifCam Helper",
@@ -487,6 +511,10 @@
     "ollamaModel": "已安装的 Ollama 视觉模型",
     "visionQuestion": "关于画面的问题",
     "visionOllama": "计数并询问 Ollama",
-    "remoteConsent": "我同意把最后一帧发送到自己的私有 CORE 服务器，不保存图像"
+    "remoteConsent": "我同意把最后一帧发送到自己的私有 CORE 服务器，不保存图像",
+    "visibleNow": "最新画面中的物体",
+    "visiblePeak": "每帧最大数量",
+    "ollamaAnswer": "Ollama 的回答",
+    "noObjects": "未检测到物体"
   }
 }
