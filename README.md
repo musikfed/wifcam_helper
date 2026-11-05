@@ -86,3 +86,10 @@ Private camera credentials, Wi-Fi keys, SSH keys, certificates (`fullchain.pem`,
 Instructions: [Русский](wiki/Guide-RU.md) · [English](wiki/Guide-EN.md) · [Беларуская](wiki/Guide-BE.md) · [Саха тыла](wiki/Guide-SAH.md) · [Deutsch](wiki/Guide-DE.md) · [Français](wiki/Guide-FR.md) · [中文](wiki/Guide-ZH-CN.md)
 
 © PegineLab. All external tools and firmware retain their own respective licenses.
+
+
+## Project showcase · Презентация · 11 languages
+
+[**Visual workflow, international descriptions and contacts**](docs/showcase/README.md)
+
+![wifcam_helper workflow](docs/showcase/overview.svg)
