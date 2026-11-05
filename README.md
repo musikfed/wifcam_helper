@@ -92,4 +92,3 @@ Instructions: [Русский](wiki/Guide-RU.md) · [English](wiki/Guide-EN.md) 
 
 [**Visual workflow, international descriptions and contacts**](docs/showcase/README.md)
 
-![wifcam_helper workflow](docs/showcase/overview.svg)
