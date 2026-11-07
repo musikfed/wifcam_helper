@@ -1,29 +1,39 @@
 #!/bin/sh
-# BusyBox httpd CGI; use the same authenticated webroot as WIFICAM.
+# WIFICAM authenticated CGI: tiny role control, no media streams or shell input.
 set -eu
 header() {
-  printf 'Content-Type: application/json\r\nCache-Control: no-store\r\n\r\n'
+    printf 'Content-Type: application/json; charset=utf-8\r\n'
+    printf 'Cache-Control: no-store\r\n'
+    printf 'X-Content-Type-Options: nosniff\r\n\r\n'
 }
 fail() { header; printf '{"ok":false,"error":"%s"}\n' "$1"; exit 0; }
-method=${REQUEST_METHOD:-GET}
-case "$method" in
+[ -n "${REMOTE_USER:-}" ] || fail "authentication_required"
+case "${REQUEST_METHOD:-GET}" in
   GET)
     header
     exec /usr/bin/wifcam-helper-probe
     ;;
   POST)
-    [ -n "${REMOTE_USER:-}" ] || fail "authentication_required"
-    token=${HTTP_X_CSRF_TOKEN:-}
-    [ -n "$token" ] || fail "csrf_required"
-    [ -s /var/run/wificam-csrf ] || fail "csrf_unavailable"
-    expected=$(cat /var/run/wificam-csrf)
-    [ "$token" = "$expected" ] || fail "csrf_invalid"
-    # Small, fixed allowlist; only the mode query key is permitted.
-    case "${QUERY_STRING:-}" in
-      mode=robot_head) mode=robot_head ;;
-      mode=voice_assistant) mode=voice_assistant ;;
+    # Use regular WIFICAM form POST, not custom HTTP headers unsupported by some BusyBox builds.
+    body=""
+    case "${CONTENT_LENGTH:-0}" in
+      ''|*[!0-9]*) fail "invalid_length" ;;
+    esac
+    [ "${CONTENT_LENGTH:-0}" -le 512 ] || fail "body_too_large"
+    IFS= read -r body || true
+    get_field() {
+      printf '%s\n' "$body" | tr '&' '\n' | sed -n "s/^$1=//p" | head -n1
+    }
+    mode=$(get_field mode)
+    supplied=$(get_field csrf)
+    case "$mode" in
+      robot_head|voice_assistant) ;;
       *) fail "invalid_mode" ;;
     esac
+    [ -n "$supplied" ] || fail "csrf_required"
+    [ -s /var/run/wificam-csrf ] || fail "csrf_unavailable"
+    expected=$(cat /var/run/wificam-csrf)
+    [ "$supplied" = "$expected" ] || fail "csrf_invalid"
     /usr/bin/wifcam-helper-mode set "$mode" >/dev/null || fail "write_failed"
     header
     exec /usr/bin/wifcam-helper-probe
