@@ -1,6 +1,32 @@
 #!/bin/sh
-# Protected by the same WIFICAM BusyBox CGI server configuration as all camera endpoints.
+# BusyBox httpd CGI; use the same authenticated webroot as WIFICAM.
 set -eu
-printf 'Content-Type: application/json\r\n'
-printf 'Cache-Control: no-store\r\n\r\n'
-exec /usr/bin/wifcam-helper-probe
+header() {
+  printf 'Content-Type: application/json\r\nCache-Control: no-store\r\n\r\n'
+}
+fail() { header; printf '{"ok":false,"error":"%s"}\n' "$1"; exit 0; }
+method=${REQUEST_METHOD:-GET}
+case "$method" in
+  GET)
+    header
+    exec /usr/bin/wifcam-helper-probe
+    ;;
+  POST)
+    [ -n "${REMOTE_USER:-}" ] || fail "authentication_required"
+    token=${HTTP_X_CSRF_TOKEN:-}
+    [ -n "$token" ] || fail "csrf_required"
+    [ -s /var/run/wificam-csrf ] || fail "csrf_unavailable"
+    expected=$(cat /var/run/wificam-csrf)
+    [ "$token" = "$expected" ] || fail "csrf_invalid"
+    # Small, fixed allowlist; only the mode query key is permitted.
+    case "${QUERY_STRING:-}" in
+      mode=robot_head) mode=robot_head ;;
+      mode=voice_assistant) mode=voice_assistant ;;
+      *) fail "invalid_mode" ;;
+    esac
+    /usr/bin/wifcam-helper-mode set "$mode" >/dev/null || fail "write_failed"
+    header
+    exec /usr/bin/wifcam-helper-probe
+    ;;
+  *) fail "method_not_allowed" ;;
+esac
