@@ -23,7 +23,9 @@ class FirmwareOverlayTests(unittest.TestCase):
         self.assertIn("inference", (OVERLAY/"usr/bin/wifcam-helper-probe").read_text())
         self.assertIn("application/json",
                       (OVERLAY/"usr/share/wificam-web/cgi-bin/helper-capabilities").read_text())
-        self.assertFalse(any(OVERLAY.rglob("*.py")))\n        self.assertIn("robot_head", (OVERLAY/"usr/bin/wifcam-helper-mode").read_text())\n        self.assertIn("csrf_invalid", (OVERLAY/"usr/share/wificam-web/cgi-bin/helper-capabilities").read_text())
+        self.assertFalse(any(OVERLAY.rglob("*.py")))
+        self.assertIn("robot_head", (OVERLAY/"usr/bin/wifcam-helper-mode").read_text())
+        self.assertIn("csrf_invalid", (OVERLAY/"usr/share/wificam-web/cgi-bin/helper-capabilities").read_text())
 
     def test_posix_shell_syntax(self):
         for name in EXPECTED:
