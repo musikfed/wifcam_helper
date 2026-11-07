@@ -9,7 +9,8 @@ OVERLAY=ROOT/"firmware"/"overlay"
 EXPECTED={
     "etc/wifcam-helper-release",
     "etc/init.d/S92wifcam-helper",
-    "usr/bin/wifcam-helper-probe",\n    "usr/bin/wifcam-helper-mode",
+    "usr/bin/wifcam-helper-probe",
+    "usr/bin/wifcam-helper-mode",
     "usr/share/wificam-web/cgi-bin/helper-capabilities",
 }
 
