@@ -1,6 +1,29 @@
 #!/bin/sh
-# Protected by the same WIFICAM BusyBox CGI server configuration as all camera endpoints.
-set -eu
-printf 'Content-Type: application/json\r\n'
-printf 'Cache-Control: no-store\r\n\r\n'
-exec /usr/bin/wifcam-helper-probe
+# Same authenticated PegineLab CGI stack, port 8090; CSRF for mode changes.
+set -e
+header() {
+ printf 'Content-Type: application/json; charset=utf-8\r\n'
+ printf 'Cache-Control: no-store\r\n'
+ printf 'X-Content-Type-Options: nosniff\r\n\r\n'
+}
+fail() { header; printf '{"ok":false,"error":"%s"}\n' "$1"; exit 0; }
+[ -n "$REMOTE_USER" ] || fail authentication_required
+case "$REQUEST_METHOD" in
+ GET) header; exec /usr/bin/wifcam-helper-probe ;;
+ POST)
+   size="$CONTENT_LENGTH"
+   case "$size" in ''|*[!0-9]*) fail invalid_content_length ;; esac
+   [ "$size" -le 512 ] || fail body_too_large
+   body=""
+   IFS= read -r body || :
+   field() { printf '%s\n' "$body" | tr '&' '\n' | sed -n "s/^$1=//p" | head -n 1; }
+   mode="$(field mode)"
+   supplied="$(field csrf)"
+   case "$mode" in robot_head|voice_assistant) ;; *) fail invalid_mode ;; esac
+   case "$supplied" in ''|*[!a-fA-F0-9]*) fail csrf_failed ;; esac
+   expected="$(cat /var/run/wificam-csrf 2>/dev/null || :)"
+   [ -n "$expected" ] && [ "$supplied" = "$expected" ] || fail csrf_failed
+   /usr/bin/wifcam-helper-mode set "$mode" >/dev/null || fail mode_write_failed
+   header; exec /usr/bin/wifcam-helper-probe ;;
+ *) fail method_not_allowed ;;
+esac

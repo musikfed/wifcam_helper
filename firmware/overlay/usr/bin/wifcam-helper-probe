@@ -1,10 +1,13 @@
 #!/bin/sh
-# Small camera-side capability probe; no recordings or arbitrary commands.
 set -eu
-status() { if command -v "$1" >/dev/null 2>&1; then printf true; else printf false; fi; }
-boot=false
-[ ! -f /run/wifcam-helper-booted ] || boot=true
-mic=$(status rad)
-speaker=$(status rac)
-video=$(status rvd)
-printf '{"schema":"peginelab.camera-head.v1","firmware":"wifcam_helper","platform":"ingenic_t23n","helper_booted":%s,"microphone_transport":%s,"speaker_transport":%s,"video_transport":%s,"hardware_verified":false,"inference":"external_core"}\n' "$boot" "$mic" "$speaker" "$video"
+present() { if command -v "$1" >/dev/null 2>&1; then printf true; else printf false; fi; }
+ready=false
+[ ! -s /run/wifcam-helper-booted ] || ready=true
+mode="$(/usr/bin/wifcam-helper-mode status)"
+mic="$(present rad)"
+speaker="$(present rac)"
+video="$(present rvd)"
+ptz="$(present wificam-ptz-ctl)"
+ui=false
+if grep -q PEGINELAB_HELPER_UI_V1 /usr/share/wificam-web/index.html 2>/dev/null; then ui=true; fi
+printf '{"ok":true,"schema":"peginelab.camera-head.v1","firmware":"wifcam_helper","platform":"ingenic_t23n","mode":"%s","helper_booted":%s,"helper_ui":%s,"microphone_transport":%s,"speaker_transport":%s,"video_transport":%s,"ptz_controller":%s,"hardware_verified":false,"inference":"external_core"}\n' "$mode" "$ready" "$ui" "$mic" "$speaker" "$video" "$ptz"

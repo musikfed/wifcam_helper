@@ -1,18 +1,11 @@
 #!/bin/sh
-# No hot microphone recording or sound playback at boot.
-# Existing rvd/rad/rac/RTSP services remain managed by the base camera image.
-case "${1:-}" in
-  start)
+# No hot microphone, speaker or PTZ action at boot.
+case "$1" in
+  start|restart)
+    /usr/bin/wifcam-helper-mode init >/dev/null || exit 1
     mkdir -p /run
-    printf 'camera-head helper overlay started\n' > /run/wifcam-helper-booted
+    printf 'ready\n' > /run/wifcam-helper-booted
     ;;
-  stop)
-    rm -f /run/wifcam-helper-booted
-    ;;
-  restart)
-    rm -f /run/wifcam-helper-booted
-    mkdir -p /run
-    printf 'camera-head helper overlay started\n' > /run/wifcam-helper-booted
-    ;;
+  stop) rm -f /run/wifcam-helper-booted ;;
   *) echo "Usage: $0 {start|stop|restart}" >&2; exit 2 ;;
 esac

@@ -1,0 +1,29 @@
+#!/bin/sh
+# Persist only a bounded role. No motors, microphone or model started here.
+set -eu
+STATE_DIR="$(printenv WIFCAM_HELPER_STATE_DIR 2>/dev/null || echo /opt/wificam/helper)"
+MODE_FILE="$STATE_DIR/mode"
+current() {
+    mode=""
+    if [ -r "$MODE_FILE" ]; then IFS= read -r mode < "$MODE_FILE" || :; fi
+    case "$mode" in
+      robot_head|voice_assistant) printf '%s\n' "$mode" ;;
+      *) printf 'voice_assistant\n' ;;
+    esac
+}
+save() {
+    case "$1" in robot_head|voice_assistant) ;; *) echo "invalid mode" >&2; exit 2 ;; esac
+    umask 077
+    mkdir -p "$STATE_DIR"
+    temp="$STATE_DIR/.mode.$$"
+    trap 'rm -f "$temp"' EXIT HUP INT TERM
+    printf '%s\n' "$1" > "$temp"
+    mv -f "$temp" "$MODE_FILE"
+    trap - EXIT HUP INT TERM
+}
+case "$1" in
+    status) [ "$#" -eq 1 ] || exit 2; current ;;
+    init) [ "$#" -eq 1 ] || exit 2; if [ ! -f "$MODE_FILE" ]; then save voice_assistant; fi; current ;;
+    set) [ "$#" -eq 2 ] || exit 2; save "$2"; current ;;
+    *) echo "Usage: $0 {status|init|set robot_head|voice_assistant}" >&2; exit 2 ;;
+esac
