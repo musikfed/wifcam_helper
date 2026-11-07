@@ -9,4 +9,4 @@ case "$mode" in robot_head|voice_assistant) ;; *) mode=voice_assistant;; esac
 mic=$(status rad)
 speaker=$(status rac)
 video=$(status rvd)
-printf '{"schema":"peginelab.camera-head.v1","firmware":"wifcam_helper","platform":"ingenic_t23n","mode":"%s","available_modes":["robot_head","voice_assistant"],"helper_booted":%s,"microphone_transport":%s,"speaker_transport":%s,"video_transport":%s,"hardware_verified":false,"inference":"external_core"}\n' "$mode" "$boot" "$mic" "$speaker" "$video"
+printf '{"ok":true,"schema":"peginelab.camera-head.v1","firmware":"wifcam_helper","platform":"ingenic_t23n","mode":"%s","available_modes":["robot_head","voice_assistant"],"helper_booted":%s,"microphone_transport":%s,"speaker_transport":%s,"video_transport":%s,"hardware_verified":false,"inference":"external_core"}\n' "$mode" "$boot" "$mic" "$speaker" "$video"
