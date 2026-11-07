@@ -1,0 +1,21 @@
+{
+  "schema_version": "1.0",
+  "id": "wifcam_helper",
+  "title": "wifcam_helper",
+  "version": "0.1.0",
+  "description": "EN: Local-first testing of the real Galayou G2 / Ingenic T23N camera, used alone or as Hombo3's robot head. RU: Автономный стенд проверки камеры, микрофона, динамика, RTSP и задержек. No cloud, no remote dependency, no uncontrolled flashing.",
+  "subtitle": null,
+  "tags": [
+    "Python"
+  ],
+  "visibility": "public",
+  "publication": "publish_on_merge",
+  "public_private_approved": false,
+  "display_mode": "diagram",
+  "status": "Черновик — ожидает проверки",
+  "repo_url": "https://github.com/musikfed/wifcam_helper",
+  "screenshots": [],
+  "cover": "vitrine/generated/cover.svg",
+  "cover_type": "schematic-not-screenshot",
+  "screenshot_source": "not-available"
+}
