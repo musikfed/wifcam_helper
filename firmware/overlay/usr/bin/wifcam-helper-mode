@@ -1,0 +1,28 @@
+#!/bin/sh
+# Tiny persistent role selector for Ingenic T23N. No arbitrary commands.
+set -eu
+STATE_DIR=/opt/wificam
+STATE_FILE=$STATE_DIR/helper-mode
+DEFAULT=voice_assistant
+read_mode() {
+    value=$(cat "$STATE_FILE" 2>/dev/null || true)
+    case "$value" in robot_head|voice_assistant) printf '%s\n' "$value";; *) printf '%s\n' "$DEFAULT";; esac
+}
+set_mode() {
+    case "${1:-}" in robot_head|voice_assistant) ;; *) echo "invalid mode" >&2; exit 2;; esac
+    mkdir -p "$STATE_DIR"
+    umask 077
+    tmp="$STATE_FILE.$$"
+    trap 'rm -f "$tmp"' EXIT HUP INT TERM
+    printf '%s\n' "$1" > "$tmp"
+    mv -f "$tmp" "$STATE_FILE"
+    trap - EXIT HUP INT TERM
+}
+case "${1:-}" in
+  status) read_mode ;;
+  init)
+    if [ ! -f "$STATE_FILE" ]; then set_mode "$DEFAULT"; fi
+    read_mode ;;
+  set) set_mode "${2:-}"; read_mode ;;
+  *) echo "Usage: $0 {status|init|set robot_head|set voice_assistant}" >&2; exit 2 ;;
+esac
