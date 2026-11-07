@@ -1,10 +1,12 @@
 #!/bin/sh
-# Small camera-side capability probe; no recordings or arbitrary commands.
+# Capability inventory, not a claim of physical functionality.
 set -eu
 status() { if command -v "$1" >/dev/null 2>&1; then printf true; else printf false; fi; }
 boot=false
 [ ! -f /run/wifcam-helper-booted ] || boot=true
+mode=$(/usr/bin/wifcam-helper-mode status 2>/dev/null || echo voice_assistant)
+case "$mode" in robot_head|voice_assistant) ;; *) mode=voice_assistant;; esac
 mic=$(status rad)
 speaker=$(status rac)
 video=$(status rvd)
-printf '{"schema":"peginelab.camera-head.v1","firmware":"wifcam_helper","platform":"ingenic_t23n","helper_booted":%s,"microphone_transport":%s,"speaker_transport":%s,"video_transport":%s,"hardware_verified":false,"inference":"external_core"}\n' "$boot" "$mic" "$speaker" "$video"
+printf '{"schema":"peginelab.camera-head.v1","firmware":"wifcam_helper","platform":"ingenic_t23n","mode":"%s","available_modes":["robot_head","voice_assistant"],"helper_booted":%s,"microphone_transport":%s,"speaker_transport":%s,"video_transport":%s,"hardware_verified":false,"inference":"external_core"}\n' "$mode" "$boot" "$mic" "$speaker" "$video"
