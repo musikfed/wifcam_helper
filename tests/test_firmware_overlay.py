@@ -9,7 +9,7 @@ OVERLAY=ROOT/"firmware"/"overlay"
 EXPECTED={
     "etc/wifcam-helper-release",
     "etc/init.d/S92wifcam-helper",
-    "usr/bin/wifcam-helper-probe",
+    "usr/bin/wifcam-helper-probe",\n    "usr/bin/wifcam-helper-mode",
     "usr/share/wificam-web/cgi-bin/helper-capabilities",
 }
 
@@ -22,11 +22,11 @@ class FirmwareOverlayTests(unittest.TestCase):
         self.assertIn("inference", (OVERLAY/"usr/bin/wifcam-helper-probe").read_text())
         self.assertIn("application/json",
                       (OVERLAY/"usr/share/wificam-web/cgi-bin/helper-capabilities").read_text())
-        self.assertFalse(any(OVERLAY.rglob("*.py")))
+        self.assertFalse(any(OVERLAY.rglob("*.py")))\n        self.assertIn("robot_head", (OVERLAY/"usr/bin/wifcam-helper-mode").read_text())\n        self.assertIn("csrf_invalid", (OVERLAY/"usr/share/wificam-web/cgi-bin/helper-capabilities").read_text())
 
     def test_posix_shell_syntax(self):
         for name in EXPECTED:
-            if name.endswith(("wifcam-helper-probe","helper-capabilities","S92wifcam-helper")):
+            if name.endswith(("wifcam-helper-probe","wifcam-helper-mode","helper-capabilities","S92wifcam-helper")):
                 subprocess.run(["sh","-n",str(OVERLAY/name)],check=True)
 
     def test_contract_requests_real_build_adapter(self):
