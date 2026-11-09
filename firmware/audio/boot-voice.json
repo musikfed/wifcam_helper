@@ -1,0 +1,12 @@
+{
+  "schema": "peginelab.helper-voice.v1",
+  "language": "ru",
+  "spoken_text": "Я голова робота, Хомобота, йоу! Асистенто! Хомоботас! Летс гоу!",
+  "voice": "ru",
+  "rate": 155,
+  "pitch": 66,
+  "amplitude": 175,
+  "sample_rate": 16000,
+  "channels": 1,
+  "sample_width_bytes": 2
+}
