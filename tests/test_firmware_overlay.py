@@ -7,7 +7,7 @@ from pathlib import Path
 ROOT=Path(__file__).resolve().parents[1]
 OVERLAY=ROOT/"firmware"/"overlay"
 UI=ROOT/"firmware"/"ui"
-SOUND=ROOT/"firmware"/"audio"/"boot-jingle.json"
+VOICE=ROOT/"firmware"/"audio"/"boot-voice.json"
 EXPECTED={
     "etc/wifcam-helper-release",
     "etc/init.d/S92wifcam-helper",
@@ -29,7 +29,7 @@ class FirmwareOverlayTests(unittest.TestCase):
         self.assertIn("robot_head", (OVERLAY/"usr/bin/wifcam-helper-mode").read_text())
         self.assertIn("csrf_invalid", (OVERLAY/"usr/share/wificam-web/cgi-bin/helper-capabilities").read_text())
 
-    def test_helper_owns_complete_camera_ui_and_original_audio_score(self):
+    def test_helper_owns_complete_camera_ui_and_spoken_boot_phrase(self):
         expected={"index.html", "styles.css", "app.js", "assets/peginelab-logo.svg"}
         actual={p.relative_to(UI).as_posix() for p in UI.rglob("*") if p.is_file()}
         self.assertEqual(actual, expected)
@@ -37,11 +37,12 @@ class FirmwareOverlayTests(unittest.TestCase):
         self.assertIn("helper-capabilities", (UI/"app.js").read_text())
         self.assertIn("helperRobotMode", (UI/"index.html").read_text())
         self.assertIn("helperVoiceMode", (UI/"index.html").read_text())
-        score=json.loads(SOUND.read_text())
-        self.assertEqual(score["schema"],"peginelab.boot-jingle.v1")
-        self.assertEqual(score["device_sample_rate"],16000)
-        self.assertEqual(score["duration_seconds"],7)
-        self.assertEqual(len(score["events"]),35)
+        voice=json.loads(VOICE.read_text())
+        self.assertEqual(voice["schema"],"peginelab.helper-voice.v1")
+        self.assertEqual(voice["sample_rate"],16000)
+        self.assertIn("Хомоботас", voice["spoken_text"])
+        self.assertFalse((ROOT/"firmware/audio/boot-jingle.json").exists())
+        self.assertTrue((ROOT/"tools/render_voice.py").is_file())
         self.assertFalse(any(UI.rglob("*.py")))
 
     def test_posix_shell_syntax(self):
