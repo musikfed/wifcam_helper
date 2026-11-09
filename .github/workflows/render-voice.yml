@@ -29,7 +29,7 @@ jobs:
         shell: bash
         run: |
           set -euo pipefail
-          git add firmware/audio/boot-voice.wav
+          git add -f -- firmware/audio/boot-voice.wav
           if git diff --cached --quiet; then
             echo "Voice asset already up to date."
           else
