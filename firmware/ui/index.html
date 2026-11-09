@@ -1,0 +1,192 @@
+<!doctype html>
+<html lang="ru">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <title>PEGINELAB WifCam Helper · T23N</title>
+  <link rel="icon" href="assets/peginelab-logo.svg">
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+<!-- Browser-facing PegineLab boot identity for headless T23N; no /dev/fb0 needed. -->
+<div class="boot-intro" aria-hidden="true">
+  <img src="assets/peginelab-logo.svg" alt="">
+  <strong>PegineLab</strong>
+  <span>WIFICAM · T23N</span>
+</div>
+<div class="app">
+  <aside class="sidebar">
+    <div class="brand-lockup">
+      <img src="assets/peginelab-logo.svg" alt="PegineLab">
+      <div><div class="brand">WIFICAM <b>T23N</b></div><div class="sub">PegineLab • Ingenic camera control</div></div>
+    </div>
+    <nav id="nav">
+      <button data-page="dashboard" class="active">⌂ <span data-i18n="dashboard">Главная</span></button>
+      <button data-page="live">▶ <span data-i18n="live">Видео</span></button>
+      <button data-page="recording">● <span data-i18n="recording">Запись</span></button>
+      <button data-page="image">◫ <span data-i18n="image">Изображение</span></button>
+      <button data-page="network">≋ <span data-i18n="network">Сеть / Wi‑Fi</span></button>
+      <button data-page="storage">▤ <span data-i18n="storage">SD-карта</span></button>
+      <button id="helperNav" data-page="helper" hidden>◉ <span data-i18n="helperNav">Голова / Помощник</span></button>
+      <button data-page="assistant">✦ <span data-i18n="assistant">ИИ / Голос</span></button>
+      <button data-page="system">⚙ <span data-i18n="system">Система</span></button>
+      <button data-page="firmware">⇧ <span data-i18n="firmware">Обновление</span></button>
+      <button data-page="logs">⌁ <span data-i18n="logs">Логи</span></button>
+    </nav>
+    <div class="lang"><button id="langBtn">RU / EN</button></div>
+  </aside>
+
+  <main>
+    <header><div><h1 id="pageTitle">Главная</h1><p id="pageHint">PegineLab WIFICAM • состояние камеры</p></div><div id="online" class="pill">● …</div></header>
+
+    <section id="dashboard" class="page active">
+      <div class="brand-panel">
+        <img src="assets/peginelab-logo.svg" alt="PegineLab PL">
+        <div><strong>PegineLab WIFICAM T23N</strong><span>Embedded camera firmware • MIPS / Ingenic</span></div>
+      </div>
+      <div class="grid cards">
+        <article><small data-i18n="model">Модель</small><strong>T23/T23N</strong><span>Ingenic XBurst</span></article>
+        <article><small>Kernel</small><strong id="kernel">—</strong><span>Linux</span></article>
+        <article><small>Wi‑Fi</small><strong id="ssid">—</strong><span id="ip">—</span></article>
+        <article><small>MEDIA</small><strong id="diskUse">—</strong><span id="diskFree">—</span></article>
+      </div>
+      <div class="grid companion-grid">
+        <article class="panel companion-card">
+          <div class="companion-heading"><div><small>PEGINE AI · OPTIONAL</small><h2 data-i18n="assistantTitle">LLM / GPT напарник</h2></div><span class="companion-icon" aria-hidden="true">✦</span></div>
+          <label class="companion-toggle" for="assistantEnabled">
+            <input type="checkbox" id="assistantEnabled" disabled>
+            <span data-i18n="assistantEnable">Включить режим LLM / GPT</span>
+          </label>
+          <p class="muted" data-i18n="assistantHint">Обработку речи и GPT выполняет внешняя программа. На камере сохраняется только переключатель; звук не передаётся автоматически.</p>
+          <p class="service-state" id="assistantState" role="status" aria-live="polite">—</p>
+        </article>
+        <article class="panel companion-info">
+          <small>LOCAL-FIRST</small><h2 data-i18n="assistantArchitecture">Камера + внешний голосовой сервер</h2>
+          <p class="muted" data-i18n="assistantArchitectureHint">RTSP остаётся доступен независимо от режима ИИ. Для разговора через встроенный микрофон и динамик нужен внешний мост и проверка двустороннего аудио.</p>
+        </article>
+      </div>
+      <div class="panel">
+        <h2 data-i18n="architecture">Архитектура</h2>
+        <div class="flow"><b>Web UI</b><i>→</i><b>HTTP/JSON API</b><i>→</i><b>Camera / Network / Storage</b><i>→</i><b>Linux kernel</b></div>
+      </div>
+    </section>
+
+    <section id="live" class="page"><div class="panel"><h2 data-i18n="live">Видео</h2>
+      <div class="video live-view"><img id="liveFrame" alt="Camera preview" loading="lazy" decoding="async" style="object-fit:contain;max-width:100%;transform-origin:center center">
+      <small id="previewMode" aria-live="polite">Видео выключено: вебморда не расходует канал камеры</small></div>
+      <div class="actions">
+        <button id="previewStart" onclick="startPreview()">▶ Смотреть видео / Start preview</button>
+        <button id="previewStop" class="secondary" onclick="stopPreview()" disabled>■ Отключить видео / Stop preview</button>
+      </div>
+      <p class="muted">Hombo3 RTSP и камера продолжают работать независимо. При переключении вкладки или сворачивании окна вебпросмотр отключается автоматически.</p>
+      <div class="panel" style="margin-top:12px">
+       <h3 data-i18n="ptzTitle">Поворот камеры / PTZ</h3>
+       <p class="muted" id="ptzCapability">Проверяем доступность моторов…</p>
+       <div class="actions"><button class="ptz-control" data-direction="left" onclick="ptzMove('left')">←</button>
+       <button class="ptz-control" data-direction="up" onclick="ptzMove('up')">↑</button>
+       <button class="ptz-control" data-direction="down" onclick="ptzMove('down')">↓</button>
+       <button class="ptz-control" data-direction="right" onclick="ptzMove('right')">→</button></div>
+       <label style="display:inline-block;margin:8px"><input type="checkbox" id="panInvert" onchange="ptzInvert('pan',this.checked)"> <span data-i18n="reversePan">Реверс лево / право</span></label>
+       <label style="display:inline-block;margin:8px"><input type="checkbox" id="tiltInvert" onchange="ptzInvert('tilt',this.checked)"> <span data-i18n="reverseTilt">Реверс верх / низ</span></label>
+       <div class="actions"><button onclick="digitalZoom(-1)">− Zoom</button><button onclick="digitalZoom(1)">+ Zoom</button>
+       <button onclick="digitalZoom(0)">1×</button><button id="focusBtn" onclick="apiAction('ptz_autofocus')" disabled data-i18n="autoFocus">Автофокус (если поддерживается)</button></div>
+       <div class="actions">
+       <label><input type="checkbox" id="previewMirror" onchange="setPreviewOrientation('mirror',this.checked)"> Зеркало по горизонтали / Mirror</label>
+       <label><input type="checkbox" id="previewFlip" onchange="setPreviewOrientation('flip',this.checked)"> Переворот по вертикали / Flip</label>
+       </div>
+       <small class="muted">Зеркало и переворот меняют только этот вебпросмотр, не RTSP Hombo3 и не команды моторчиков.</small>
+       <p class="muted" id="zoomState">1× — digital preview zoom; optical zoom/autofocus require supported hardware.</p>
+      </div>
+      </div></section>
+    <section id="recording" class="page"><div class="panel"><h2 data-i18n="recording">Запись</h2><p>Video: <code>/mnt/media/recordings</code></p><p>Photos: <code>/mnt/media/snapshots</code></p><div class="actions"><button onclick="apiAction('record_start')">Start recording</button><button class="danger" onclick="apiAction('record_stop')">Stop recording</button></div></div></section>
+    <section id="image" class="page"><div class="panel"><h2 data-i18n="image">Изображение</h2><p data-i18n="imageHint">Web UI использует camera service, который ОС подняла при загрузке.</p><p class="muted" id="imageCapabilities">—</p><button type="button" id="openImagePreview" data-i18n="imageOpenCamera">Открыть настройки просмотра и PTZ</button><p class="muted" data-i18n="imageControlsHint">Цифровой zoom, зеркало и переворот работают в браузере. Оптический фокус и разрешение пока не изменяются без проверенного драйвера.</p></div></section>
+
+    <section id="network" class="page">
+      <div class="panel">
+        <h2 data-i18n="network">Сеть / Wi‑Fi</h2>
+        <div class="kv"><div><small>SSID</small><b id="netSsid">—</b></div><div><small>IPv4</small><b id="netIp">—</b></div><div><small data-i18n="gateway">Шлюз</small><b id="netGateway">—</b></div><div><small>DNS</small><b id="netDns">—</b></div></div>
+        <p data-i18n="wifiSafe">Новая сеть сначала тестируется. При ошибке backend возвращает предыдущий рабочий профиль.</p>
+        <div class="actions"><button id="scanBtn" data-i18n="scan">Сканировать сети</button></div>
+        <div id="networks" class="networks"></div>
+        <form id="wifiForm"><label>SSID<input id="wifiSsid" name="ssid" maxlength="32" required></label><label><span data-i18n="password">Пароль</span><input id="wifiPassword" name="password" type="password" minlength="8" required></label><button type="submit" data-i18n="testSwitch">Проверить и переключить</button></form>
+      </div>
+
+      <div class="panel">
+        <h2 data-i18n="optionalServices">Дополнительные сервисы</h2>
+        <p class="muted" data-i18n="servicesHint">Выключенный сервис не запускается и не занимает CPU/RAM постоянным процессом.</p>
+        <div class="service-grid">
+          <article class="service-card"><div><h3>SSH</h3><p>Local recovery shell • TCP 22 • protected</p><span id="sshState" class="service-state">—</span></div><button id="sshToggle" onclick="toggleService('ssh')">—</button></article>
+          <article class="service-card"><div><h3>WireGuard</h3><p><code>/data/vpn/wg0.conf</code></p><span id="wireguardState" class="service-state">—</span></div><button id="wireguardToggle" onclick="toggleService('wireguard')">—</button></article>
+          <article class="service-card"><div><h3>AmneziaWG</h3><p><code>/data/vpn/awg0.conf</code></p><span id="amneziawgState" class="service-state">—</span></div><button id="amneziawgToggle" onclick="toggleService('amneziawg')">—</button></article>
+        </div>
+      </div>
+    </section>
+
+    <section id="assistant" class="page">
+      <div class="panel"><h2 data-i18n="assistant">ИИ / Голос</h2>
+        <p data-i18n="assistantPageInfo">Эта настройка разрешает внешней программе использовать камеру как голосового напарника. ИИ не запускается на T23N и не получает доступ к потоку до настройки внешнего моста.</p>
+        <div class="kv companion-status-grid">
+          <div><small data-i18n="assistantMode">Режим</small><b id="assistantModeValue">—</b></div>
+          <div><small data-i18n="assistantBridge">Внешний мост</small><b id="assistantBridgeValue">—</b></div>
+        </div>
+        <p class="muted" data-i18n="assistantBridgeHint">Статус подключения означает недавний сигнал внешней программы, а не подтверждение работы микрофона или динамика.</p>
+        <p class="muted" data-i18n="assistantSecrets">Ключи GPT / LLM должны храниться только на внешнем компьютере или сервере. Не вводите их в камеру.</p>
+        <p><a href="https://github.com/musikfed/wificam_T23N/blob/mymarrchWFcam/docs/LLM_VOICE_COMPANION_RU.md" target="_blank" rel="noopener noreferrer" data-i18n="assistantGuide">Инструкция по подключению внешнего голосового моста</a></p>
+      </div>
+    </section>
+    <section id="helper" class="page" hidden>
+      <div class="helper-hero">
+        <div><small>PEGINELAB · WIFCAM HELPER · T23N · ДВА РЕЖИМА</small>
+          <h2 data-i18n="helperTitle">Камера как голова робота или голосовой помощник</h2>
+          <p data-i18n="helperIntro">Одна прошивка, два режима. Переключение сохраняется на SD и не прерывает видеопоток Hombo3.</p>
+        </div><div class="helper-chip" id="helperCurrentMode" role="status">—</div>
+      </div>
+      <div class="grid helper-mode-grid" role="group" aria-label="Camera head operation mode">
+        <article class="helper-mode-card" id="helperRobotCard">
+          <div class="helper-symbol" aria-hidden="true">◈</div>
+          <h3 data-i18n="helperRobot">Голова робота Hombo3</h3>
+          <p data-i18n="helperRobotHint">Видео и PTZ для колёсного робота; команды приводов остаются на ESP32-S3 через Acer.</p>
+          <button type="button" id="helperRobotMode" data-i18n="helperSelectRobot" disabled>Выбрать голову робота</button>
+        </article>
+        <article class="helper-mode-card" id="helperVoiceCard">
+          <div class="helper-symbol" aria-hidden="true">✦</div>
+          <h3 data-i18n="helperVoice">Голосовой помощник</h3>
+          <p data-i18n="helperVoiceHint">Камерные микрофон, динамик и наблюдение; STT, TTS, LLM и зрение выполняются на CORE.</p>
+          <button type="button" id="helperVoiceMode" data-i18n="helperSelectVoice" disabled>Выбрать помощника</button>
+        </article>
+      </div>
+      <div class="panel">
+        <div class="helper-row"><div><h2 data-i18n="helperHealth">Диагностика камеры</h2>
+          <p class="muted" data-i18n="helperHealthNote">Доступность программы не доказывает, что микрофон, динамик и сенсор физически работают.</p></div>
+          <button type="button" id="helperRefresh" class="secondary" data-i18n="helperRefresh">Обновить состояние</button>
+        </div>
+        <div class="grid helper-health-grid">
+          <div><small data-i18n="helperMic">Микрофон (rad)</small><b id="helperMicState">—</b></div>
+          <div><small data-i18n="helperSpeaker">Динамик (rac)</small><b id="helperSpeakerState">—</b></div>
+          <div><small data-i18n="helperVideo">Видео (rvd)</small><b id="helperVideoState">—</b></div>
+          <div><small data-i18n="helperHardware">Физическая проверка</small><b id="helperHardwareState">—</b></div>
+        </div>
+        <p class="helper-message" id="helperMessage" aria-live="polite">—</p>
+        <div class="actions helper-actions">
+          <button type="button" id="helperGoLive" data-i18n="helperOpenCamera">Открыть видео / PTZ</button>
+          <button type="button" id="helperGoSystem" class="secondary" data-i18n="helperOpenSystem">Настройки и перезапуск</button>
+        </div>
+      </div>
+    </section>
+
+    <section id="storage" class="page"><div class="panel"><h2 data-i18n="storage">SD-карта</h2><p data-i18n="storageLayout">MEDIA = 20 GiB для фото/видео; всё остальное место карты получает ROOTFS.</p><div id="storageInfo">—</div><button onclick="loadStorage()">Refresh</button></div></section>
+
+    <section id="system" class="page">
+      <div class="panel"><h2 data-i18n="system">Система</h2><p>Camera: <b id="cameraState">—</b></p><p>Uptime: <span id="uptime">—</span></p><p>Web user: <b id="webUser">—</b></p><button class="danger" id="rebootBtn" data-i18n="reboot">Перезагрузить</button></div>
+      <div class="panel"><h2 data-i18n="webPassword">Пароль администратора Web UI</h2><form id="webPasswordForm"><label><span data-i18n="newPassword">Новый пароль</span><input id="newWebPassword" type="password" minlength="10" maxlength="64" pattern="[!-~]{10,64}" required></label><label><span data-i18n="repeatPassword">Повторить пароль</span><input id="repeatWebPassword" type="password" minlength="10" maxlength="64" pattern="[!-~]{10,64}" required></label><button type="submit" data-i18n="changePassword">Сменить пароль</button></form><p class="muted" data-i18n="authHint">После смены пароля HTTP-аутентификация перезапустится.</p></div>
+    </section>
+
+    <section id="firmware" class="page"><div class="panel"><h2 data-i18n="firmware">Обновление</h2><p data-i18n="fwHint">Сборка и скачивание полного образа microSD выполняются в YadroKreator. Камера не переписывает загрузчик сама.</p><div class="kv"><div><small>Firmware</small><b id="firmwareIdentity">—</b></div><div><small>Board</small><b id="firmwareBoard">—</b></div><div><small>Web UI</small><b id="firmwarePort">:8090</b></div></div><button type="button" id="firmwareRefresh" data-i18n="firmwareRefresh">Обновить информацию</button><p class="muted">Boot: MBR → MSPL LBA34 → FAT16 /uImage → ext4 /dev/mmcblk0p2.</p></div></section>
+    <section id="logs" class="page"><div class="panel"><h2 data-i18n="logs">Логи</h2><p data-i18n="logsHint">Журнал HTTPD камеры. Чтение по кнопке, без фонового опроса и передачи на внешние серверы.</p><button type="button" id="loadCameraLogs" data-i18n="logsLoad">Загрузить журнал камеры</button><pre id="cameraLogBox">—</pre><details><summary data-i18n="logsBrowser">Журнал браузерного интерфейса</summary><pre id="logBox">UI ready.</pre></details></div></section>
+
+    <div id="toast"></div>
+  </main>
+</div>
+<script src="app.js"></script>
+</body>
+</html>
