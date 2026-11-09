@@ -1,0 +1,40 @@
+name: Render WifCam Helper boot voice
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - firmware/audio/boot-voice.json
+      - tools/render_voice.py
+      - .github/workflows/render-voice.yml
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+jobs:
+  render:
+    if: github.repository == 'musikfed/wifcam_helper'
+    runs-on: ubuntu-latest
+    timeout-minutes: 12
+    steps:
+      - uses: actions/checkout@v4
+      - name: Install Linux voice renderer (not on the camera)
+        run: |
+          sudo apt-get update -qq
+          sudo apt-get install -y --no-install-recommends espeak-ng ffmpeg
+      - name: Render and validate actual PCM WAV
+        run: python3 tools/render_voice.py
+      - name: Commit generated voice asset to this repository
+        shell: bash
+        run: |
+          set -euo pipefail
+          git add firmware/audio/boot-voice.wav
+          if git diff --cached --quiet; then
+            echo "Voice asset already up to date."
+          else
+            git config user.name "github-actions[bot]"
+            git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+            git commit -m "build(helper): render original spoken robot-head greeting"
+            git push origin HEAD:main
+          fi
