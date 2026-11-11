@@ -36,6 +36,10 @@ jobs:
           python - <<'PY'
           from pathlib import Path
           forbidden = {'.pem','.key','.wav','.pcm','.mp4','.img','.bin'}
-          bad = [str(p) for p in Path('.').rglob('*') if p.is_file() and p.suffix.lower() in forbidden and '.git' not in p.parts]
+          allowed_voice = Path('firmware/audio/boot-voice.wav')
+          if allowed_voice.is_file():
+              data = allowed_voice.read_bytes()
+              assert len(data) < 1024 * 1024 and data[:4] == b'RIFF' and data[8:12] == b'WAVE'
+          bad = [str(p) for p in Path('.').rglob('*') if p.is_file() and p.suffix.lower() in forbidden and '.git' not in p.parts and p != allowed_voice]
           assert not bad, bad
           PY
