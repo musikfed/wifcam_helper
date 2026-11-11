@@ -1,3 +1,12 @@
+## Lenya v2.2 · minimal SD image and reproducible scripts
+
+**RU:** [IMG или установка по SSH](docs/lenya/INSTALL_RU.md) · [Краткая эволюция](docs/lenya/EVOLUTION_RU.md).
+**EN:** [Image or scripts](docs/lenya/INSTALL_EN.md) · [BE](docs/lenya/INSTALL_BE.md) · [SAH](docs/lenya/INSTALL_SAH.md) · [DE](docs/lenya/INSTALL_DE.md) · [FR](docs/lenya/INSTALL_FR.md) · [ZH-CN](docs/lenya/INSTALL_ZH-CN.md).
+
+Current working step: camera + Acer voice dialogue. Huananzhi Brain Server, RAG, graph, tracking and recognition are planned, not installed. Keep SD IMG, credentials and biometric data private.
+
+---
+
 # PegineLab WifCam Helper · T23N Camera-Head Firmware + Test Bench
 
 **EN:** Local-first testing of the real Galayou G2 / Ingenic T23N camera, used alone or as Hombo3's robot head. **RU:** Автономный стенд проверки камеры, микрофона, динамика, RTSP и задержек. No cloud, no remote dependency, no uncontrolled flashing.

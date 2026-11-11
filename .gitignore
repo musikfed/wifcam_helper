@@ -17,3 +17,18 @@ state/
 *.bin
 *.img
 *.sqlite3
+
+# Private SD images and runtime state
+*.img
+*.img.zip
+T23N_Lenya_WORKING*
+peginelab.zip
+**/station-config.json
+**/client.conf
+**/llm-connection.conf
+**/llm-route.conf
+**/privkey.pem
+**/id_rsa
+**/id_ed25519
+**/.venv/
+**/__pycache__/
