@@ -1,5 +1,7 @@
 ## Lenya v2.2 · minimal SD image and reproducible scripts
 
+**Checkpoint / рабочая точка 2026-11-11:** [RU](docs/lenya/CHECKPOINT_RU.md) · [EN](docs/lenya/CHECKPOINT_EN.md) · [BE](docs/lenya/CHECKPOINT_BE.md) · [SAH](docs/lenya/CHECKPOINT_SAH.md) · [DE](docs/lenya/CHECKPOINT_DE.md) · [FR](docs/lenya/CHECKPOINT_FR.md) · [ZH-CN](docs/lenya/CHECKPOINT_ZH-CN.md). Includes **T23N SD boot-offset safety rules** and unfinished work (explicitly not deployed).
+
 **RU:** [IMG или установка по SSH](docs/lenya/INSTALL_RU.md) · [Краткая эволюция](docs/lenya/EVOLUTION_RU.md).
 **EN:** [Image or scripts](docs/lenya/INSTALL_EN.md) · [BE](docs/lenya/INSTALL_BE.md) · [SAH](docs/lenya/INSTALL_SAH.md) · [DE](docs/lenya/INSTALL_DE.md) · [FR](docs/lenya/INSTALL_FR.md) · [ZH-CN](docs/lenya/INSTALL_ZH-CN.md).
 
